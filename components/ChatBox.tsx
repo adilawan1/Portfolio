@@ -25,8 +25,6 @@ export default function ChatBox() {
 
   const isLoading = status === "submitted" || status === "streaming";
 
-  console.log(messages);
-
   return (
     <div className="flex flex-col w-full max-w-2xl h-[500px] border border-slate-700 rounded-xl overflow-hidden bg-slate-900/50 shadow-2xl">
       {/* Messages Display Area */}
@@ -59,7 +57,7 @@ export default function ChatBox() {
               </span>
               <p className="text-sm whitespace-pre-wrap leading-relaxed">
                 {/* 3. Render the text directly from content! */}
-                {m.text || m.parts?.map((p: any) => p.text).join("")}
+                {m.parts?.map((p: any) => p.text).join("")}
               </p>
             </div>
           </div>
