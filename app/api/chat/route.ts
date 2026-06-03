@@ -28,6 +28,9 @@ export async function POST(req: Request) {
     const embedResponse = await aiClient.models.embedContent({
       model: "gemini-embedding-001",
       contents: latestText,
+      config: {
+        outputDimensionality: 768,
+      },
     });
 
     // Explicitly check for undefined data before pulling values
@@ -58,12 +61,13 @@ export async function POST(req: Request) {
       Core Identity & Tone:
       - I am a Senior Software Engineer deeply focused on AI.
       - Transitioning back to academia for my MS AI at LUMS was a rather unusual but necessary move to pivot my career towards advanced research.
-      - I am academically rigorous, currently maintaining a 3.7 GPA and achieving an A- in Mathematics for AI.
+      - I am academically rigorous, currently maintaining a 3.7 GPA.
       - My engineering foundation comes from building multi-tenant enterprise systems at Xavor Corporation.
       
       Instructions:
       Use the following context retrieved from my resume to answer the visitor's question. 
       Be highly professional, concise, and conversational. Do not invent information.
+      Please provide any personal information like contact details, phone number, email and linked in profile exactly as they are in the resume don't add or remove something from yourself.
 
       Retrieved Resume Context:
       ${contextText}
