@@ -42,24 +42,18 @@ export default function ChatBox() {
         )}
         {messages.map((m) => (
           <div
-            key={m.id}
-            className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
+            className={`max-w-[90%] p-3 border-l-2 ${
+              m.role === "user"
+                ? "bg-slate-800/50 border-slate-400 text-slate-200 self-end text-right"
+                : "bg-blue-900/10 border-blue-500 text-blue-100 self-start"
+            }`}
           >
-            <div
-              className={`max-w-[85%] rounded-xl p-4 ${
-                m.role === "user"
-                  ? "bg-blue-600 text-white rounded-br-none"
-                  : "bg-slate-800 text-slate-200 border border-slate-700 rounded-bl-none"
-              }`}
-            >
-              <span className="font-bold text-[10px] tracking-wider uppercase mb-1 block opacity-50">
-                {m.role === "user" ? "Visitor" : "Ahmed AI"}
-              </span>
-              <p className="text-sm whitespace-pre-wrap leading-relaxed">
-                {/* 3. Render the text directly from content! */}
-                {m.parts?.map((p: any) => p.text).join("")}
-              </p>
-            </div>
+            <span className="font-mono text-[10px] tracking-wider uppercase mb-1 block opacity-50">
+              {m.role === "user" ? "visitor@local:~$" : "system_agent@rag:~$"}
+            </span>
+            <p className="text-sm whitespace-pre-wrap font-mono leading-relaxed">
+              {m.parts?.map((p: any) => p.text).join("")}
+            </p>
           </div>
         ))}
         {isLoading && (
