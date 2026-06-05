@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import ChatBox from "@/components/ChatBox"; // Your existing chat component
+import Image from "next/image";
 
 export default function PortfolioDashboard() {
   // We track which project the user is currently viewing
@@ -20,17 +21,24 @@ export default function PortfolioDashboard() {
             [1] NASA Telemetry
           </button>
           <button
+            onClick={() => setActiveProject("ros2-barn")}
+            className={`px-4 py-2 font-mono text-sm border ${activeProject === "ros2-barn" ? "border-emerald-500 text-emerald-400 bg-emerald-900/20" : "border-slate-800 hover:border-slate-600"}`}
+          >
+            [2] BARN Challenge ROS 2
+          </button>
+          {/* <button
             onClick={() => setActiveProject("neuro-focus")}
             className={`px-4 py-2 font-mono text-sm border ${activeProject === "neuro-focus" ? "border-emerald-500 text-emerald-400 bg-emerald-900/20" : "border-slate-800 hover:border-slate-600"}`}
           >
-            [2] Neuro Focus Guard
-          </button>
+            [3] Neuro Focus Guard
+          </button> */}
         </header>
 
         {/* Dynamic Project Content Area */}
         <main className="flex-1 bg-slate-900/50 border border-slate-800 p-8 rounded-sm overflow-y-auto">
           {activeProject === "nasa-telemetry" && <NasaTelemetryProject />}
-          {activeProject === "neuro-focus" && <NeuroFocusProject />}
+          {/* {activeProject === "neuro-focus" && <NeuroFocusProject />} */}
+          {activeProject === "ros2-barn" && <ROS2Project />}
         </main>
       </div>
 
@@ -59,16 +67,160 @@ function NasaTelemetryProject() {
         Unsupervised Anomaly Detection in High-Dimensional Telemetry
       </h1>
       <div className="text-sm font-mono text-blue-400 border-l-2 border-blue-500 pl-4 py-1">
-        Tech Stack: Python, TensorFlow, LaTeX | Role: AI Researcher
+        MS Artificial Intelligence Project (Deep Learning)
+        <br />
+        <br /> Tech Stack: Python, TensorFlow, PyTorch, CUDA, NumPy, Pandas,
+        Scikit-Learn, Matplotlib, Google Colab, Kaggle CLI, LaTeX
       </div>
+      {/* Your existing figure container */}
+      <figure className="border border-slate-700 bg-slate-950 p-4 rounded-sm">
+        <div className="relative w-full h-64 md:h-80 lg:h-96 overflow-hidden border border-slate-800">
+          <Image
+            src="/anomaly-detection-architecture.png"
+            alt="Autoencoder Architecture Diagram"
+            fill
+            className="object-contain filter contrast-125 grayscale opacity-90 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
+          />
+        </div>
+        <figcaption className="text-xs font-mono text-slate-500 mt-3 border-t border-slate-800 pt-2">
+          Fig - Architecture variance.
+        </figcaption>
+      </figure>
       <p className="leading-relaxed text-slate-400">
-        <strong>Abstract:</strong> This research explores the application of
-        Autoencoder architectures to detect unsupervised anomalies in NASA
-        spacecraft telemetry datasets...
+        <strong>Abstract:</strong> Industrial and spacecraft telemetry streams
+        gen erate vast volumes of multivariate sensor data, but labelled
+        anomalies are rare or absent. We study purely unsupervised
+        reconstruction-based detection on the NASA SMAP/MSL telemetry benchmark
+        and propose a hybrid temporal au toencoder that runs an LSTM and a
+        Temporal Convolutional Network (TCN) encoder in paral lel, fuses their
+        per-timestep representations with a learned attention gate, and scores
+        anomalies by combining input-space reconstruction error with a
+        latent-space Mahalanobis distance (dual scor ing). We further introduce
+        an anomaly-masked dynamic threshold that prevents sustained anoma lies
+        from inflating the running baseline. Across six representative SMAP and
+        MSL channels, the dual score yields perfect recall on every model
+        evaluated and lifts the seq-to-seq LSTM autoen coder to a mean
+        Point-Adjusted F1 of 0.953, sub stantially above the CNN baseline
+        (0.775). The hybrid model reaches 0.846 and is the most con sistent
+        recall-1.0 detector, showing that fusing reconstruction error with
+        latent distance catches anomalies that either signal misses alone.
       </p>
-      {/* Placeholder for your actual system diagrams or interactive charts */}
-      <div className="h-64 border border-slate-700 border-dashed flex items-center justify-center text-slate-600 font-mono text-sm bg-slate-950">
-        [ Insert Interactive SVG Architecture or Graph Here ]
+
+      {/* PDF ATTACHMENT ACTION BAR */}
+      <div className="flex flex-wrap gap-4 p-4 border border-slate-800 bg-slate-950/60 rounded-sm items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="text-xl">📄</span>
+          <div>
+            <div className="text-xs font-mono text-slate-300">
+              NASA_Telemetry_Report.pdf
+            </div>
+            <div className="text-[10px] font-mono text-slate-500">
+              Size: 2.4 MB | Format: IEEE Manuscript
+            </div>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          {/* Opens PDF in a new browser tab */}
+          <a
+            href="/anomaly-detection-report.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-1.5 font-mono text-xs border border-slate-700 hover:border-slate-500 text-slate-300 transition-colors"
+          >
+            [VIEW_MANUSCRIPT]
+          </a>
+          {/* Forces a direct file download */}
+          <a
+            href="/anomaly-detection-report.pdf"
+            download
+            className="px-3 py-1.5 font-mono text-xs bg-blue-900/20 border border-blue-800 text-blue-400 hover:bg-blue-900/40 transition-colors"
+          >
+            [DOWNLOAD_RAW]
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ROS2Project() {
+  return (
+    <div className="space-y-6">
+      <h1 className="text-3xl font-serif text-slate-100">
+        Camera-LiDAR Based Autonomous Navigation in BARN using ROS2
+      </h1>
+      <div className="text-sm font-mono text-blue-400 border-l-2 border-blue-500 pl-4 py-1">
+        MS Artificial Intelligence Project (Robotics) <br />
+        <br />
+        Tech Stack: Python, ROS 2, OpenCV, NumPy, cv_bridge, rclpy
+      </div>
+      {/* Your existing figure container */}
+      <figure className="border border-slate-700 bg-slate-950 p-4 rounded-sm">
+        <div className="relative w-full h-64 md:h-80 lg:h-96 overflow-hidden border border-slate-800">
+          <Image
+            src="/VFH.png"
+            alt="Autoencoder Architecture Diagram"
+            fill
+            className="object-contain filter contrast-125 grayscale opacity-90 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
+          />
+        </div>
+        <figcaption className="text-xs font-mono text-slate-500 mt-3 border-t border-slate-800 pt-2">
+          Fig - Vector Field Histogram Diagram.
+        </figcaption>
+      </figure>
+      <p className="leading-relaxed text-slate-400">
+        <strong>Abstract:</strong> This paper presents a ROS 2–based au tonomous
+        navigation system for the Benchmark Au tonomous Robot Navigation (BARN)
+        environment, com bining vision and LiDAR sensing for robust navigation
+        in cluttered spaces. Our vision-based masking pipeline segments
+        obstacles and extracts traversable floor re gions from RGB images, using
+        a centroid-based pro portional controller to guide the robot.
+        Simultaneously, LiDAR data is processed via a Vector Field Histogram
+        (VFH)–inspired approach. This method constructs an inverse-distance
+        weighted polar histogram to identify contiguous free-space regions,
+        selecting the midpoint of the widest feasible valley as the optimal
+        path. The final steering command is a weighted fusion of these dual
+        perception streams, ensuring robustness under varying environmental
+        conditions. To overcome local minima, we incorporate SLAM for global
+        mapping and an exploration-driven scoring function for effective
+        recovery. The system achieves an average score of 0.324 on the BARN
+        benchmark and successfully navigates 41 out of 50 worlds (250-299) of
+        the test worlds, demonstrating significant effectiveness in handling
+        narrow passages and occlusions.
+      </p>
+
+      {/* PDF ATTACHMENT ACTION BAR */}
+      <div className="flex flex-wrap gap-4 p-4 border border-slate-800 bg-slate-950/60 rounded-sm items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="text-xl">📄</span>
+          <div>
+            <div className="text-xs font-mono text-slate-300">
+              ros2_BARN_Report.pdf
+            </div>
+            <div className="text-[10px] font-mono text-slate-500">
+              Size: 2.4 MB | Format: IEEE Manuscript
+            </div>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          {/* Opens PDF in a new browser tab */}
+          <a
+            href="/barn-challenge.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-1.5 font-mono text-xs border border-slate-700 hover:border-slate-500 text-slate-300 transition-colors"
+          >
+            [VIEW_MANUSCRIPT]
+          </a>
+          {/* Forces a direct file download */}
+          <a
+            href="/barn-challenge.pdf"
+            download
+            className="px-3 py-1.5 font-mono text-xs bg-blue-900/20 border border-blue-800 text-blue-400 hover:bg-blue-900/40 transition-colors"
+          >
+            [DOWNLOAD_RAW]
+          </a>
+        </div>
       </div>
     </div>
   );
@@ -83,11 +235,30 @@ function NeuroFocusProject() {
       </div>
       <p className="leading-relaxed text-slate-400">
         A desktop application utilizing computer vision to detect user
-        distraction in real-time, designed to improve deep work sessions.
+        distraction in real-time. Designed to improve deep work sessions by
+        enforcing focus states via local ML inference.
       </p>
-      {/* Placeholder for your UI screenshots */}
-      <div className="h-64 border border-slate-700 border-dashed flex items-center justify-center text-slate-600 font-mono text-sm bg-slate-950">
-        [ Insert Application Screenshot Mockups Here ]
+
+      {/* TELEMETRY MOCKUP CONTAINER */}
+      <div className="border border-slate-700 bg-slate-950 rounded-sm overflow-hidden">
+        {/* Mock OS Window Header */}
+        <div className="bg-slate-900 border-b border-slate-800 px-3 py-2 flex items-center gap-2">
+          <div className="w-2.5 h-2.5 rounded-full bg-slate-700"></div>
+          <div className="w-2.5 h-2.5 rounded-full bg-slate-700"></div>
+          <div className="w-2.5 h-2.5 rounded-full bg-slate-700"></div>
+          <span className="text-[10px] font-mono text-slate-500 ml-2">
+            neuro_focus_runtime.exe
+          </span>
+        </div>
+        {/* App Screenshot */}
+        <div className="relative w-full h-64 md:h-80 lg:h-96">
+          <Image
+            src="/neuro-app-screenshot.png"
+            alt="Neuro Focus Guard User Interface"
+            fill
+            className="object-cover object-top"
+          />
+        </div>
       </div>
     </div>
   );

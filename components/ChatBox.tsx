@@ -26,7 +26,7 @@ export default function ChatBox() {
   const isLoading = status === "submitted" || status === "streaming";
 
   return (
-    <div className="flex flex-col w-full max-w-2xl h-[500px] border border-slate-700 rounded-xl overflow-hidden bg-slate-900/50 shadow-2xl">
+    <div className="flex flex-col w-full max-w-2xl h-125 border border-slate-700 rounded-xl overflow-hidden bg-slate-900/50 shadow-2xl">
       {/* Messages Display Area */}
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {messages.length === 0 && (
