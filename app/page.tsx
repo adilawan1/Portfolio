@@ -26,18 +26,11 @@ export default function PortfolioDashboard() {
           >
             [2] BARN Challenge ROS 2
           </button>
-          {/* <button
-            onClick={() => setActiveProject("neuro-focus")}
-            className={`px-4 py-2 font-mono text-sm border ${activeProject === "neuro-focus" ? "border-emerald-500 text-emerald-400 bg-emerald-900/20" : "border-slate-800 hover:border-slate-600"}`}
-          >
-            [3] Neuro Focus Guard
-          </button> */}
         </header>
 
         {/* Dynamic Project Content Area */}
         <main className="flex-1 bg-slate-900/50 border border-slate-800 p-8 rounded-sm overflow-y-auto">
           {activeProject === "nasa-telemetry" && <NasaTelemetryProject />}
-          {/* {activeProject === "neuro-focus" && <NeuroFocusProject />} */}
           {activeProject === "ros2-barn" && <ROS2Project />}
         </main>
       </div>
@@ -220,44 +213,6 @@ function ROS2Project() {
           >
             [DOWNLOAD_RAW]
           </a>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function NeuroFocusProject() {
-  return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-serif text-slate-100">Neuro Focus Guard</h1>
-      <div className="text-sm font-mono text-emerald-400 border-l-2 border-emerald-500 pl-4 py-1">
-        Tech Stack: Electron, React, MediaPipe | Role: Full-Stack & ML Engineer
-      </div>
-      <p className="leading-relaxed text-slate-400">
-        A desktop application utilizing computer vision to detect user
-        distraction in real-time. Designed to improve deep work sessions by
-        enforcing focus states via local ML inference.
-      </p>
-
-      {/* TELEMETRY MOCKUP CONTAINER */}
-      <div className="border border-slate-700 bg-slate-950 rounded-sm overflow-hidden">
-        {/* Mock OS Window Header */}
-        <div className="bg-slate-900 border-b border-slate-800 px-3 py-2 flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-slate-700"></div>
-          <div className="w-2.5 h-2.5 rounded-full bg-slate-700"></div>
-          <div className="w-2.5 h-2.5 rounded-full bg-slate-700"></div>
-          <span className="text-[10px] font-mono text-slate-500 ml-2">
-            neuro_focus_runtime.exe
-          </span>
-        </div>
-        {/* App Screenshot */}
-        <div className="relative w-full h-64 md:h-80 lg:h-96">
-          <Image
-            src="/neuro-app-screenshot.png"
-            alt="Neuro Focus Guard User Interface"
-            fill
-            className="object-cover object-top"
-          />
         </div>
       </div>
     </div>
