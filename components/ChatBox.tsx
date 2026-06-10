@@ -54,7 +54,7 @@ export default function ChatBox() {
             </p>
             <p>Ready to analyze high-dimensional vectors.</p>
             <p>
-              Query me regarding my experience at Xavor Corporation, MS AI
+              Query me regarding my experience as a Software Engineer, MS AI
               research, or PhD goals.
             </p>
           </div>
