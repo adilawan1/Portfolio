@@ -6,7 +6,7 @@ import Image from "next/image";
 
 export default function PortfolioDashboard() {
   // We track which project the user is currently viewing
-  const [activeProject, setActiveProject] = useState("nasa-telemetry");
+  const [activeProject, setActiveProject] = useState("profile");
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-300 font-sans p-4 md:p-8 flex flex-col md:flex-row gap-6">
@@ -14,6 +14,12 @@ export default function PortfolioDashboard() {
       <div className="flex-1 flex flex-col gap-6">
         {/* Navigation/Telemetry Header */}
         <header className="border-b border-slate-800 pb-4 flex gap-4">
+          <button
+            onClick={() => setActiveProject("profile")}
+            className={`px-4 py-2 font-mono text-sm border ${activeProject === "profile" ? "border-purple-500 text-purple-400 bg-purple-900/20" : "border-slate-800 hover:border-slate-600"}`}
+          >
+            [0] System.Profile
+          </button>
           <button
             onClick={() => setActiveProject("nasa-telemetry")}
             className={`px-4 py-2 font-mono text-sm border ${activeProject === "nasa-telemetry" ? "border-blue-500 text-blue-400 bg-blue-900/20" : "border-slate-800 hover:border-slate-600"}`}
@@ -30,6 +36,7 @@ export default function PortfolioDashboard() {
 
         {/* Dynamic Project Content Area */}
         <main className="flex-1 bg-slate-900/50 border border-slate-800 p-8 rounded-sm overflow-y-auto">
+          {activeProject === "profile" && <ProfileResume />}
           {activeProject === "nasa-telemetry" && <NasaTelemetryProject />}
           {activeProject === "ros2-barn" && <ROS2Project />}
         </main>
@@ -213,6 +220,103 @@ function ROS2Project() {
           >
             [DOWNLOAD_RAW]
           </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// --- INTERACTIVE RESUME ---
+
+function ProfileResume() {
+  return (
+    <div className="space-y-8 animate-fadeIn">
+      {/* Header Profile Section */}
+      <div className="border-b border-slate-800 pb-6">
+        <h1 className="text-4xl font-serif text-slate-100 mb-2">Ahmed Adil</h1>
+        <div className="text-sm font-mono text-purple-400 border-l-2 border-purple-500 pl-4 py-1">
+          Senior Software Engineer & AI Researcher
+        </div>
+        <p className="mt-4 text-slate-400 leading-relaxed">
+          Bridging the gap between multi-tenant enterprise architecture and
+          advanced artificial intelligence research. Currently focusing on Deep
+          Learning, RAG infrastructures, and autonomous robotics with the intent
+          to make an impact.
+        </p>
+      </div>
+
+      {/* Grid for Academic and Professional split */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Education Block */}
+        <div className="border border-slate-800 bg-slate-900/30 p-5 rounded-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-blue-500">🎓</span>
+            <h2 className="text-lg font-semibold text-slate-200">
+              Academic Research
+            </h2>
+          </div>
+          <div className="space-y-3 font-mono text-sm">
+            <div>
+              <div className="text-slate-300">MS Artificial Intelligence</div>
+              <div className="text-slate-500 text-xs">LUMS • Final Year</div>
+            </div>
+            <div>
+              <div className="text-slate-300">Current CGPA</div>
+              <div className="text-blue-400">3.76 / 4.0</div>
+            </div>
+            <div className="pt-2 border-t border-slate-800">
+              <div className="text-slate-500 text-xs mb-1">Focus Areas:</div>
+              <div className="text-slate-400">
+                Neural Networks (RNN/LSTM), Transformers, Computer Vision,
+                Autonomous Navigation.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Experience Block */}
+        <div className="border border-slate-800 bg-slate-900/30 p-5 rounded-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-emerald-500">💻</span>
+            <h2 className="text-lg font-semibold text-slate-200">
+              Engineering Foundation
+            </h2>
+          </div>
+          <div className="space-y-3 font-mono text-sm">
+            <div>
+              <div className="text-slate-300">Senior Software Engineer</div>
+              <div className="text-slate-500 text-xs">
+                Xavor Corporation • ~4 Years
+              </div>
+            </div>
+            <div className="pt-2 border-t border-slate-800">
+              <div className="text-slate-500 text-xs mb-1">
+                Core Tech Stack:
+              </div>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {[
+                  "React",
+                  "Next.js",
+                  "LangChain",
+                  "Kentico Headless CMS",
+                  "ROS 2",
+                  "PyTorch",
+                ].map((tech) => (
+                  <span
+                    key={tech}
+                    className="px-2 py-1 bg-slate-800 text-slate-300 text-[10px] rounded-sm border border-slate-700"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="text-slate-400 text-xs leading-relaxed mt-2">
+              Architected and maintained multi-tenant enterprise systems
+              supporting up to 20 distinct tenants. Integrated complex Auth0
+              identity providers across .NET and React Native ecosystems.
+            </div>
+          </div>
         </div>
       </div>
     </div>
