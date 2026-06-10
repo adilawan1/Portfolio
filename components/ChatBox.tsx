@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 
 export default function ChatBox() {
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage, status, error } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/chat",
     }),
@@ -107,6 +107,20 @@ export default function ChatBox() {
         {isLoading && messages[messages.length - 1]?.role === "user" && (
           <div className="text-blue-500 text-xs animate-pulse flex items-center gap-1 pl-1">
             <span>▋</span> <span>Executing retrieval sequence...</span>
+          </div>
+        )}
+        {error && (
+          <div className="mx-4 mb-4 p-3 border border-red-900/50 bg-red-950/30 rounded-sm flex items-start gap-3 animate-fadeIn">
+            <span className="text-red-500 font-bold mt-0.5">⚠</span>
+            <div>
+              <div className="text-red-400 text-xs font-bold uppercase tracking-wider mb-1">
+                System Overload
+              </div>
+              <div className="text-red-200/70 text-xs font-mono">
+                The AI Co-pilot is currently receiving too many requests. Please
+                wait 60 seconds and try again.
+              </div>
+            </div>
           </div>
         )}
       </div>
