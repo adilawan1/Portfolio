@@ -5,55 +5,110 @@ import ChatBox from "@/components/ChatBox"; // Your existing chat component
 import Image from "next/image";
 
 export default function PortfolioDashboard() {
-  // We track which project the user is currently viewing
   const [activeProject, setActiveProject] = useState("profile");
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-300 font-sans p-4 md:p-8 flex flex-col md:flex-row gap-6">
-      {/* LEFT PANEL: The Academic/Visual Showcase (65% width) */}
-      <div className="flex-1 flex flex-col gap-6">
-        {/* Navigation/Telemetry Header */}
-        <header className="border-b border-slate-800 pb-4 flex gap-4">
+    // Changed md:flex-row to lg:flex-row
+    <div className="min-h-screen bg-slate-950 text-slate-300 font-sans p-4 lg:p-8 flex flex-col lg:flex-row gap-6 relative overflow-x-hidden">
+      {/* LEFT PANEL: The Academic/Visual Showcase */}
+      <div className="flex-1 flex flex-col gap-6 w-full">
+        {/* Navigation/Telemetry Header - Changed md style overrides to lg */}
+        <header className="border-b border-slate-800 pb-4 flex gap-4 overflow-x-auto whitespace-nowrap scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
           <button
             onClick={() => setActiveProject("profile")}
-            className={`px-4 py-2 font-mono text-sm border ${activeProject === "profile" ? "border-purple-500 text-purple-400 bg-purple-900/20" : "border-slate-800 hover:border-slate-600"}`}
+            className={`px-4 py-2 font-mono text-sm border transition-colors ${activeProject === "profile" ? "border-purple-500 text-purple-400 bg-purple-900/20" : "border-slate-800 hover:border-slate-600"}`}
           >
             [0] System.Profile
           </button>
           <button
             onClick={() => setActiveProject("nasa-telemetry")}
-            className={`px-4 py-2 font-mono text-sm border ${activeProject === "nasa-telemetry" ? "border-blue-500 text-blue-400 bg-blue-900/20" : "border-slate-800 hover:border-slate-600"}`}
+            className={`px-4 py-2 font-mono text-sm border transition-colors ${activeProject === "nasa-telemetry" ? "border-blue-500 text-blue-400 bg-blue-900/20" : "border-slate-800 hover:border-slate-600"}`}
           >
             [1] NASA Telemetry
           </button>
           <button
             onClick={() => setActiveProject("ros2-barn")}
-            className={`px-4 py-2 font-mono text-sm border ${activeProject === "ros2-barn" ? "border-emerald-500 text-emerald-400 bg-emerald-900/20" : "border-slate-800 hover:border-slate-600"}`}
+            className={`px-4 py-2 font-mono text-sm border transition-colors ${activeProject === "ros2-barn" ? "border-emerald-500 text-emerald-400 bg-emerald-900/20" : "border-slate-800 hover:border-slate-600"}`}
           >
             [2] BARN Challenge ROS 2
           </button>
         </header>
 
         {/* Dynamic Project Content Area */}
-        <main className="flex-1 bg-slate-900/50 border border-slate-800 p-8 rounded-sm overflow-y-auto">
+        <main className="flex-1 bg-slate-900/50 border border-slate-800 p-4 lg:p-8 rounded-sm overflow-y-auto">
           {activeProject === "profile" && <ProfileResume />}
           {activeProject === "nasa-telemetry" && <NasaTelemetryProject />}
           {activeProject === "ros2-barn" && <ROS2Project />}
         </main>
       </div>
 
-      {/* RIGHT PANEL: The Persistent AI Co-Pilot (35% width) */}
-      <aside className="w-full md:w-[400px] xl:w-[450px] flex flex-col h-[85vh] sticky top-8">
+      {/* RIGHT PANEL: Desktop Persistent AI Co-Pilot */}
+      {/* Changed hidden md:flex to hidden lg:flex to prevent the side panel from rendering too early */}
+      <aside className="hidden lg:flex w-full lg:w-[380px] xl:w-[450px] flex-col h-[85vh] sticky top-8">
         <div className="border border-slate-800 bg-slate-900/30 p-3 mb-2 flex justify-between items-center text-xs font-mono">
           <span className="text-blue-500 animate-pulse">● SYSTEM ONLINE</span>
           <span className="text-slate-500">VECTOR_DIM: 768</span>
         </div>
 
-        {/* We inject your working ChatBox here, but tell it to fill the height */}
         <div className="flex-1 bg-slate-900 border border-slate-800 overflow-hidden shadow-2xl">
           <ChatBox />
         </div>
       </aside>
+
+      {/* ========================================= */}
+      {/* MOBILE/TABLET: SLIDING CHAT DRAWER       */}
+      {/* ========================================= */}
+      {/* Changed md:hidden to lg:hidden */}
+      <div
+        className={`fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${isChatOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+      >
+        <div
+          className={`absolute bottom-0 left-0 right-0 h-[85vh] bg-slate-950 border-t border-slate-700 rounded-t-2xl transition-transform duration-300 flex flex-col shadow-[0_-10px_40px_rgba(0,0,0,0.5)] ${isChatOpen ? "translate-y-0" : "translate-y-full"}`}
+        >
+          <div className="flex justify-between items-center p-4 border-b border-slate-800 bg-slate-900/50 rounded-t-2xl">
+            <div className="flex items-center gap-2 font-mono text-xs">
+              <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+              <span className="text-slate-300">CO-PILOT.AGENT</span>
+            </div>
+            <button
+              onClick={() => setIsChatOpen(false)}
+              className="text-slate-400 hover:text-white font-mono text-[10px] tracking-widest px-3 py-1.5 border border-slate-700 rounded bg-slate-800 transition-colors"
+            >
+              [ CLOSE ]
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-hidden p-1">
+            <ChatBox />
+          </div>
+        </div>
+      </div>
+
+      {/* ========================================= */}
+      {/* MOBILE/TABLET: FLOATING ACTION BUTTON    */}
+      {/* ========================================= */}
+      {/* Changed md:hidden to lg:hidden */}
+      <button
+        onClick={() => setIsChatOpen(true)}
+        className={`lg:hidden fixed bottom-6 right-6 z-40 bg-blue-900/80 text-blue-400 border border-blue-500/50 backdrop-blur-md rounded-full px-5 py-4 shadow-xl hover:bg-blue-800 transition-all duration-300 flex items-center justify-center font-mono text-xs group ${isChatOpen ? "scale-0 opacity-0" : "scale-100 opacity-100"}`}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+          />
+        </svg>
+        INIT_CHAT
+      </button>
     </div>
   );
 }
