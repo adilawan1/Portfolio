@@ -12,20 +12,25 @@ function TypewriterText({
   className?: string;
 }) {
   const [displayed, setDisplayed] = useState("");
+  const [done, setDone] = useState(false);
   useEffect(() => {
     let i = 0;
     setDisplayed("");
+    setDone(false);
     const timer = setInterval(() => {
       i++;
       setDisplayed(text.slice(0, i));
-      if (i >= text.length) clearInterval(timer);
+      if (i >= text.length) {
+        clearInterval(timer);
+        setDone(true);
+      }
     }, 55);
     return () => clearInterval(timer);
   }, [text]);
   return (
     <span className={className}>
       {displayed}
-      <span className="animate-pulse opacity-70">▌</span>
+      {!done && <span className="animate-pulse opacity-70">▌</span>}
     </span>
   );
 }
@@ -58,6 +63,18 @@ export default function PortfolioDashboard() {
           >
             [2] BARN Challenge ROS 2
           </button>
+          <button
+            onClick={() => setActiveProject("certifications")}
+            className={`px-4 py-2 font-mono text-sm border transition-colors ${activeProject === "certifications" ? "border-amber-500 text-amber-400 bg-amber-900/20" : "border-slate-800 hover:border-slate-600"}`}
+          >
+            [3] Certifications
+          </button>
+          <button
+            onClick={() => setActiveProject("awards")}
+            className={`px-4 py-2 font-mono text-sm border transition-colors ${activeProject === "awards" ? "border-rose-500 text-rose-400 bg-rose-900/20" : "border-slate-800 hover:border-slate-600"}`}
+          >
+            [4] Awards
+          </button>
         </header>
 
         {/* Dynamic Project Content Area */}
@@ -68,6 +85,8 @@ export default function PortfolioDashboard() {
           {activeProject === "profile" && <ProfileResume />}
           {activeProject === "nasa-telemetry" && <NasaTelemetryProject />}
           {activeProject === "ros2-barn" && <ROS2Project />}
+          {activeProject === "certifications" && <CertificationsSection />}
+          {activeProject === "awards" && <AwardsSection />}
         </main>
       </div>
 
@@ -100,7 +119,9 @@ export default function PortfolioDashboard() {
           <div className="flex justify-between items-center p-4 border-b border-slate-800 bg-slate-900/50 rounded-t-2xl">
             <div className="flex items-center gap-2 font-mono text-xs">
               <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-              <span className="text-slate-300">CO-PILOT.AGENT</span>
+              <span className="text-slate-300">
+                AI Assistant · Ask me anything
+              </span>
             </div>
             <button
               onClick={() => setIsChatOpen(false)}
@@ -138,7 +159,7 @@ export default function PortfolioDashboard() {
             d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
           />
         </svg>
-        INIT_CHAT
+        Ask my AI
       </button>
     </div>
   );
@@ -147,18 +168,55 @@ export default function PortfolioDashboard() {
 // --- PROJECT COMPONENTS ---
 
 function NasaTelemetryProject() {
+  const techStack = [
+    "Python",
+    "PyTorch",
+    "TensorFlow",
+    "CUDA",
+    "NumPy",
+    "Pandas",
+    "Scikit-Learn",
+    "Matplotlib",
+    "Google Colab",
+    "LaTeX",
+  ];
+  const contributions = [
+    "Proposed a hybrid LSTM + TCN autoencoder with a learned per-timestep attention gate, fusing two encoder streams into a single anomaly representation.",
+    "Introduced dual scoring: combines input-space reconstruction error with latent-space Mahalanobis distance to catch anomalies that either signal misses alone.",
+    "Added an anomaly-masked dynamic threshold that prevents sustained anomalies from inflating the running baseline — a common failure mode in prior work.",
+    "Evaluated on 6 NASA SMAP/MSL channels, achieving perfect recall on every model and a mean PA-F1 of 0.953 — +0.178 above the CNN baseline.",
+  ];
+
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-serif text-slate-100">
-        Unsupervised Anomaly Detection in High-Dimensional Telemetry
-      </h1>
-      <div className="text-sm font-mono text-blue-400 border-l-2 border-blue-500 pl-4 py-1">
-        MS Artificial Intelligence Project (Deep Learning)
-        <br />
-        <br /> Tech Stack: Python, TensorFlow, PyTorch, CUDA, NumPy, Pandas,
-        Scikit-Learn, Matplotlib, Google Colab, Kaggle CLI, LaTeX
+      {/* Title + context */}
+      <div>
+        <h1 className="text-3xl font-serif text-slate-100 mb-3">
+          Unsupervised Anomaly Detection in High-Dimensional Telemetry
+        </h1>
+        <p className="text-sm text-slate-400 leading-relaxed border-l-2 border-blue-500 pl-4">
+          A hybrid deep learning system that detects sensor anomalies in NASA
+          spacecraft data without any labelled examples — achieving perfect
+          recall across all tested channels and a Point-Adjusted F1 of 0.953.
+        </p>
       </div>
-      {/* Metric stat cards */}
+
+      {/* Tech badges */}
+      <div className="flex flex-wrap gap-2">
+        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest self-center mr-1">
+          Stack:
+        </span>
+        {techStack.map((t) => (
+          <span
+            key={t}
+            className="px-2 py-0.5 bg-blue-950/30 border border-blue-800/40 text-blue-300 text-[10px] font-mono rounded-sm"
+          >
+            {t}
+          </span>
+        ))}
+      </div>
+
+      {/* Metric cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
           {
@@ -174,94 +232,118 @@ function NasaTelemetryProject() {
             border: "border-emerald-500/40",
           },
           {
-            label: "F1 Lift (vs baseline)",
+            label: "F1 Lift vs Baseline",
             value: "+0.178",
             color: "text-purple-400",
             border: "border-purple-500/40",
           },
           {
-            label: "Channels",
+            label: "SMAP/MSL Channels",
             value: "6",
             color: "text-slate-300",
             border: "border-slate-600/40",
           },
-        ].map((stat) => (
+        ].map((s) => (
           <div
-            key={stat.label}
-            className={`border ${stat.border} bg-slate-900/40 p-3 rounded-sm text-center animate-glow-pulse ${stat.color}`}
+            key={s.label}
+            className={`border ${s.border} bg-slate-900/40 p-3 rounded-sm text-center`}
           >
-            <div className="text-2xl font-mono font-bold">{stat.value}</div>
-            <div className="text-[10px] font-mono text-slate-500 mt-1 uppercase tracking-wider">
-              {stat.label}
+            <div className={`text-2xl font-mono font-bold ${s.color}`}>
+              {s.value}
+            </div>
+            <div className="text-[10px] font-mono text-slate-500 mt-1 leading-tight">
+              {s.label}
             </div>
           </div>
         ))}
       </div>
 
-      {/* Your existing figure container */}
+      {/* Architecture diagram */}
       <figure className="border border-slate-700 bg-slate-950 p-4 rounded-sm">
         <div className="relative w-full h-64 md:h-80 lg:h-96 overflow-hidden border border-slate-800">
           <Image
             src="/anomaly-detection-architecture.png"
-            alt="Autoencoder Architecture Diagram"
+            alt="Hybrid LSTM-TCN Autoencoder Architecture"
             fill
             className="object-contain filter contrast-125 grayscale opacity-90 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
           />
         </div>
         <figcaption className="text-xs font-mono text-slate-500 mt-3 border-t border-slate-800 pt-2">
-          Fig - Architecture variance.
+          Fig. Hybrid LSTM-TCN autoencoder architecture with learned attention
+          gate.
         </figcaption>
       </figure>
-      <p className="leading-relaxed text-slate-400">
-        <strong>Abstract:</strong> Industrial and spacecraft telemetry streams
-        generate vast volumes of multivariate sensor data, but labelled
-        anomalies are rare or absent. We study purely unsupervised
-        reconstruction-based detection on the NASA SMAP/MSL telemetry benchmark
-        and propose a hybrid temporal autoencoder that runs an LSTM and a
-        Temporal Convolutional Network (TCN) encoder in parallel, fuses their
-        per-timestep representations with a learned attention gate, and scores
-        anomalies by combining input-space reconstruction error with a
-        latent-space Mahalanobis distance (dual scoring). We further introduce
-        an anomaly-masked dynamic threshold that prevents sustained anomalies
-        from inflating the running baseline. Across six representative SMAP and
-        MSL channels, the dual score yields perfect recall on every model
-        evaluated and lifts the seq-to-seq LSTM autoencoder to a mean
-        Point-Adjusted F1 of 0.953, substantially above the CNN baseline
-        (0.775). The hybrid model reaches 0.846 and is the most consistent
-        recall-1.0 detector, showing that fusing reconstruction error with
-        latent distance catches anomalies that either signal misses alone.
-      </p>
 
-      {/* PDF ATTACHMENT ACTION BAR */}
+      {/* Key Contributions */}
+      <div className="border border-slate-800 bg-slate-900/20 p-5 rounded-sm">
+        <h2 className="text-[10px] font-mono text-blue-400 uppercase tracking-widest mb-4">
+          Key Contributions
+        </h2>
+        <ul className="space-y-3">
+          {contributions.map((c, i) => (
+            <li
+              key={i}
+              className="flex gap-3 text-sm text-slate-400 leading-relaxed"
+            >
+              <span className="text-blue-600 font-mono shrink-0 mt-0.5">
+                {String(i + 1).padStart(2, "0")}.
+              </span>
+              <span>{c}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Abstract (full academic text) */}
+      <details className="group border border-slate-800 rounded-sm">
+        <summary className="px-4 py-3 text-xs font-mono text-slate-500 cursor-pointer hover:text-slate-300 transition-colors list-none flex justify-between items-center">
+          <span>Full Abstract (IEEE Manuscript)</span>
+          <span className="group-open:rotate-90 transition-transform duration-200">
+            ›
+          </span>
+        </summary>
+        <p className="px-4 pb-4 pt-2 text-sm leading-relaxed text-slate-400 border-t border-slate-800">
+          Industrial and spacecraft telemetry streams generate vast volumes of
+          multivariate sensor data, but labelled anomalies are rare or absent.
+          We study purely unsupervised reconstruction-based detection on the
+          NASA SMAP/MSL telemetry benchmark and propose a hybrid temporal
+          autoencoder that runs an LSTM and a Temporal Convolutional Network
+          (TCN) encoder in parallel, fuses their per-timestep representations
+          with a learned attention gate, and scores anomalies by combining
+          input-space reconstruction error with a latent-space Mahalanobis
+          distance (dual scoring). We further introduce an anomaly-masked
+          dynamic threshold that prevents sustained anomalies from inflating the
+          running baseline. Across six representative SMAP and MSL channels, the
+          dual score yields perfect recall on every model evaluated and lifts
+          the seq-to-seq LSTM autoencoder to a mean Point-Adjusted F1 of 0.953,
+          substantially above the CNN baseline (0.775). The hybrid model reaches
+          0.846 and is the most consistent recall-1.0 detector, showing that
+          fusing reconstruction error with latent distance catches anomalies
+          that either signal misses alone.
+        </p>
+      </details>
+
+      {/* PDF bar */}
       <div className="flex flex-wrap gap-4 p-4 border border-slate-800 bg-slate-950/60 rounded-sm items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className="text-xl">📄</span>
-          <div>
-            <div className="text-xs font-mono text-slate-300">
-              NASA_Telemetry_Report.pdf
-            </div>
-            <div className="text-[10px] font-mono text-slate-500">
-              Size: 2.4 MB | Format: IEEE Manuscript
-            </div>
-          </div>
+        <div className="text-xs font-mono text-slate-400">
+          <span className="text-slate-300">NASA_Telemetry_Report.pdf</span>
+          <span className="text-slate-600 ml-2">2.4 MB · IEEE Manuscript</span>
         </div>
         <div className="flex gap-2">
-          {/* Opens PDF in a new browser tab */}
           <a
             href="/anomaly-detection-report.pdf"
             target="_blank"
             rel="noopener noreferrer"
             className="px-3 py-1.5 font-mono text-xs border border-slate-700 hover:border-slate-500 text-slate-300 transition-colors"
           >
-            [VIEW_MANUSCRIPT]
+            View PDF
           </a>
-          {/* Forces a direct file download */}
           <a
             href="/anomaly-detection-report.pdf"
             download
             className="px-3 py-1.5 font-mono text-xs bg-blue-900/20 border border-blue-800 text-blue-400 hover:bg-blue-900/40 transition-colors"
           >
-            [DOWNLOAD_RAW]
+            ↓ Download
           </a>
         </div>
       </div>
@@ -270,17 +352,49 @@ function NasaTelemetryProject() {
 }
 
 function ROS2Project() {
+  const techStack = [
+    "Python",
+    "ROS 2",
+    "OpenCV",
+    "NumPy",
+    "cv_bridge",
+    "rclpy",
+    "SLAM",
+  ];
+  const contributions = [
+    "Built a vision-based masking pipeline that segments obstacles and extracts traversable floor regions from RGB images, using a centroid proportional controller for steering.",
+    "Implemented a VFH-inspired LiDAR processor: constructs an inverse-distance weighted polar histogram and steers toward the midpoint of the widest free-space valley.",
+    "Fused both perception streams via a weighted combination — providing fallback robustness when one sensor is occluded or unreliable.",
+    "Integrated SLAM for global mapping and an exploration-driven scoring function to escape local minima in dense obstacle fields.",
+  ];
+
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-serif text-slate-100">
-        Camera-LiDAR Based Autonomous Navigation in BARN using ROS2
-      </h1>
-      <div className="text-sm font-mono text-blue-400 border-l-2 border-blue-500 pl-4 py-1">
-        MS Artificial Intelligence Project (Robotics) <br />
-        <br />
-        Tech Stack: Python, ROS 2, OpenCV, NumPy, cv_bridge, rclpy
+      <div>
+        <h1 className="text-3xl font-serif text-slate-100 mb-3">
+          Camera-LiDAR Autonomous Navigation in BARN using ROS 2
+        </h1>
+        <p className="text-sm text-slate-400 leading-relaxed border-l-2 border-emerald-500 pl-4">
+          An autonomous robot that navigates dense cluttered environments by
+          fusing RGB camera and LiDAR data in real time — clearing 41 of 50 BARN
+          benchmark worlds with an 82% success rate.
+        </p>
       </div>
-      {/* Metric stat cards */}
+
+      <div className="flex flex-wrap gap-2">
+        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest self-center mr-1">
+          Stack:
+        </span>
+        {techStack.map((t) => (
+          <span
+            key={t}
+            className="px-2 py-0.5 bg-emerald-950/30 border border-emerald-800/40 text-emerald-300 text-[10px] font-mono rounded-sm"
+          >
+            {t}
+          </span>
+        ))}
+      </div>
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
           {
@@ -296,98 +410,488 @@ function ROS2Project() {
             border: "border-blue-500/40",
           },
           {
-            label: "Avg Score",
+            label: "BARN Avg Score",
             value: "0.324",
             color: "text-purple-400",
             border: "border-purple-500/40",
           },
           {
-            label: "Sensors",
+            label: "Sensor Streams",
             value: "2",
             color: "text-slate-300",
             border: "border-slate-600/40",
           },
-        ].map((stat) => (
+        ].map((s) => (
           <div
-            key={stat.label}
-            className={`border ${stat.border} bg-slate-900/40 p-3 rounded-sm text-center animate-glow-pulse ${stat.color}`}
+            key={s.label}
+            className={`border ${s.border} bg-slate-900/40 p-3 rounded-sm text-center`}
           >
-            <div className="text-2xl font-mono font-bold">{stat.value}</div>
-            <div className="text-[10px] font-mono text-slate-500 mt-1 uppercase tracking-wider">
-              {stat.label}
+            <div className={`text-2xl font-mono font-bold ${s.color}`}>
+              {s.value}
+            </div>
+            <div className="text-[10px] font-mono text-slate-500 mt-1 leading-tight">
+              {s.label}
             </div>
           </div>
         ))}
       </div>
 
-      {/* Your existing figure container */}
       <figure className="border border-slate-700 bg-slate-950 p-4 rounded-sm">
         <div className="relative w-full h-64 md:h-80 lg:h-96 overflow-hidden border border-slate-800">
           <Image
             src="/VFH.png"
-            alt="Autoencoder Architecture Diagram"
+            alt="Vector Field Histogram — free-space valley detection"
             fill
             className="object-contain filter contrast-125 grayscale opacity-90 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
           />
         </div>
         <figcaption className="text-xs font-mono text-slate-500 mt-3 border-t border-slate-800 pt-2">
-          Fig - Vector Field Histogram Diagram.
+          Fig. Vector Field Histogram (VFH) polar histogram with free-space
+          valley selection.
         </figcaption>
       </figure>
-      <p className="leading-relaxed text-slate-400">
-        <strong>Abstract:</strong> This paper presents a ROS 2–based autonomous
-        navigation system for the Benchmark Autonomous Robot Navigation (BARN)
-        environment, combining vision and LiDAR sensing for robust navigation in
-        cluttered spaces. Our vision-based masking pipeline segments obstacles
-        and extracts traversable floor regions from RGB images, using a
-        centroid-based proportional controller to guide the robot.
-        Simultaneously, LiDAR data is processed via a Vector Field Histogram
-        (VFH)–inspired approach. This method constructs an inverse-distance
-        weighted polar histogram to identify contiguous free-space regions,
-        selecting the midpoint of the widest feasible valley as the optimal
-        path. The final steering command is a weighted fusion of these dual
-        perception streams, ensuring robustness under varying environmental
-        conditions. To overcome local minima, we incorporate SLAM for global
-        mapping and an exploration-driven scoring function for effective
-        recovery. The system achieves an average score of 0.324 on the BARN
-        benchmark and successfully navigates 41 out of 50 worlds (250–299) of
-        the test worlds, demonstrating significant effectiveness in handling
-        narrow passages and occlusions.
-      </p>
 
-      {/* PDF ATTACHMENT ACTION BAR */}
+      <div className="border border-slate-800 bg-slate-900/20 p-5 rounded-sm">
+        <h2 className="text-[10px] font-mono text-emerald-400 uppercase tracking-widest mb-4">
+          Key Contributions
+        </h2>
+        <ul className="space-y-3">
+          {contributions.map((c, i) => (
+            <li
+              key={i}
+              className="flex gap-3 text-sm text-slate-400 leading-relaxed"
+            >
+              <span className="text-emerald-600 font-mono shrink-0 mt-0.5">
+                {String(i + 1).padStart(2, "0")}.
+              </span>
+              <span>{c}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <details className="group border border-slate-800 rounded-sm">
+        <summary className="px-4 py-3 text-xs font-mono text-slate-500 cursor-pointer hover:text-slate-300 transition-colors list-none flex justify-between items-center">
+          <span>Full Abstract (IEEE Manuscript)</span>
+          <span className="group-open:rotate-90 transition-transform duration-200">
+            ›
+          </span>
+        </summary>
+        <p className="px-4 pb-4 pt-2 text-sm leading-relaxed text-slate-400 border-t border-slate-800">
+          This paper presents a ROS 2–based autonomous navigation system for the
+          Benchmark Autonomous Robot Navigation (BARN) environment, combining
+          vision and LiDAR sensing for robust navigation in cluttered spaces.
+          Our vision-based masking pipeline segments obstacles and extracts
+          traversable floor regions from RGB images, using a centroid-based
+          proportional controller to guide the robot. Simultaneously, LiDAR data
+          is processed via a Vector Field Histogram (VFH)–inspired approach.
+          This method constructs an inverse-distance weighted polar histogram to
+          identify contiguous free-space regions, selecting the midpoint of the
+          widest feasible valley as the optimal path. The final steering command
+          is a weighted fusion of these dual perception streams, ensuring
+          robustness under varying environmental conditions. To overcome local
+          minima, we incorporate SLAM for global mapping and an
+          exploration-driven scoring function for effective recovery. The system
+          achieves an average score of 0.324 on the BARN benchmark and
+          successfully navigates 41 out of 50 worlds (250–299) of the test
+          worlds, demonstrating significant effectiveness in handling narrow
+          passages and occlusions.
+        </p>
+      </details>
+
       <div className="flex flex-wrap gap-4 p-4 border border-slate-800 bg-slate-950/60 rounded-sm items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className="text-xl">📄</span>
-          <div>
-            <div className="text-xs font-mono text-slate-300">
-              ros2_BARN_Report.pdf
-            </div>
-            <div className="text-[10px] font-mono text-slate-500">
-              Size: 2.4 MB | Format: IEEE Manuscript
-            </div>
-          </div>
+        <div className="text-xs font-mono text-slate-400">
+          <span className="text-slate-300">ros2_BARN_Report.pdf</span>
+          <span className="text-slate-600 ml-2">2.4 MB · IEEE Manuscript</span>
         </div>
         <div className="flex gap-2">
-          {/* Opens PDF in a new browser tab */}
           <a
             href="/barn-challenge.pdf"
             target="_blank"
             rel="noopener noreferrer"
             className="px-3 py-1.5 font-mono text-xs border border-slate-700 hover:border-slate-500 text-slate-300 transition-colors"
           >
-            [VIEW_MANUSCRIPT]
+            View PDF
           </a>
-          {/* Forces a direct file download */}
           <a
             href="/barn-challenge.pdf"
             download
-            className="px-3 py-1.5 font-mono text-xs bg-blue-900/20 border border-blue-800 text-blue-400 hover:bg-blue-900/40 transition-colors"
+            className="px-3 py-1.5 font-mono text-xs bg-emerald-900/20 border border-emerald-800 text-emerald-400 hover:bg-emerald-900/40 transition-colors"
           >
-            [DOWNLOAD_RAW]
+            ↓ Download
           </a>
         </div>
       </div>
+    </div>
+  );
+}
+
+// --- CERTIFICATIONS ---
+
+type CertType = "image" | "pdf";
+interface Cert {
+  file: string;
+  name: string;
+  issuer: string;
+  date: string;
+  type: CertType;
+  accent: string;
+}
+
+function CertificationsSection() {
+  // ── Fill in the name/issuer/date for the 6 PDF entries below ──
+  const certs: Cert[] = [
+    {
+      file: "/CERTIFICATE_5.pdf",
+      name: "AI for everyone",
+      issuer: "DeepLearning.AI · Coursera",
+      date: "Apr 2024",
+      type: "pdf",
+      accent: "blue",
+    },
+    {
+      file: "/CERTIFICATE_6.pdf",
+      name: "Back End Development and APIs",
+      issuer: "FreeCodeCamp",
+      date: "March 2024",
+      type: "pdf",
+      accent: "blue",
+    },
+    {
+      file: "/CERTIFICATE_7.pdf",
+      name: "Legacy JavaScript Algorithms and Data Structures",
+      issuer: "FreeCodeCamp",
+      date: "Jan 2024",
+      type: "pdf",
+      accent: "blue",
+    },
+    {
+      file: "/CERTIFICATE_8.jpeg",
+      name: "AWS Cloud Technical Essentials",
+      issuer: "Amazon Web Services · Coursera",
+      date: "Jul 2023",
+      type: "image",
+      accent: "amber",
+    },
+    {
+      file: "/CERTIFICATE_9.jpg",
+      name: "React + Redux",
+      issuer: "Sololearn",
+      date: "Mar 2023",
+      type: "image",
+      accent: "emerald",
+    },
+    {
+      file: "/CERTIFICATE_2.pdf",
+      name: "Data Science for Everyone",
+      issuer: "Datacamp",
+      date: "March 2022",
+      type: "pdf",
+      accent: "blue",
+    },
+    {
+      file: "/CERTIFICATE_1.pdf",
+      name: " Data Manipulation in Python: Master Python, Numpy & Pandas",
+      issuer: "Udemy",
+      date: "Feb 2022",
+      type: "pdf",
+      accent: "blue",
+    },
+    {
+      file: "/CERTIFICATE_3.jpeg",
+      name: "Neural Networks and Deep Learning",
+      issuer: "DeepLearning.AI · Coursera",
+      date: "Feb 2022",
+      type: "image",
+      accent: "purple",
+    },
+    {
+      file: "/CERTIFICATE_4.pdf",
+      name: "HTML, CSS, and Javascript for Web Developers",
+      issuer: "John Hopkins University",
+      date: "Sep 2021",
+      type: "pdf",
+      accent: "blue",
+    },
+  ];
+
+  const accentClasses: Record<
+    string,
+    { border: string; text: string; bg: string }
+  > = {
+    blue: {
+      border: "border-blue-500/40",
+      text: "text-blue-400",
+      bg: "bg-blue-950/20",
+    },
+    purple: {
+      border: "border-purple-500/40",
+      text: "text-purple-400",
+      bg: "bg-purple-950/20",
+    },
+    emerald: {
+      border: "border-emerald-500/40",
+      text: "text-emerald-400",
+      bg: "bg-emerald-950/20",
+    },
+    amber: {
+      border: "border-amber-500/40",
+      text: "text-amber-400",
+      bg: "bg-amber-950/20",
+    },
+  };
+
+  return (
+    <div className="space-y-6 animate-fadeIn">
+      <div>
+        <h1 className="text-3xl font-serif text-slate-100 mb-3">
+          Certifications
+        </h1>
+        <p className="text-sm text-slate-400 border-l-2 border-amber-500 pl-4">
+          Verified credentials across AI &amp; deep learning, cloud
+          infrastructure, and software engineering.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {certs.map((cert) => {
+          const ac = accentClasses[cert.accent];
+          if (cert.type === "image") {
+            return (
+              <a
+                key={cert.file}
+                href={cert.file}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`group relative flex flex-col overflow-hidden border ${ac.border} rounded-sm bg-slate-900/40 hover:bg-slate-900/70 transition-all duration-300`}
+              >
+                <div className="relative h-44 overflow-hidden bg-white/5">
+                  <Image
+                    src={cert.file}
+                    alt={cert.name}
+                    fill
+                    className="object-cover grayscale group-hover:grayscale-0 opacity-80 group-hover:opacity-100 transition-all duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                  <div
+                    className={`absolute top-2 right-2 text-[9px] font-mono uppercase tracking-widest px-2 py-0.5 rounded-sm ${ac.bg} ${ac.text} border ${ac.border}`}
+                  >
+                    verified
+                  </div>
+                </div>
+                <div className="p-3 flex-1 flex flex-col gap-1">
+                  <div className="text-xs font-mono font-semibold text-slate-100 leading-snug">
+                    {cert.name}
+                  </div>
+                  <div className="text-[10px] font-mono text-slate-500">
+                    {cert.issuer}
+                  </div>
+                  {cert.date && (
+                    <div
+                      className={`text-[10px] font-mono mt-auto pt-2 ${ac.text}`}
+                    >
+                      {cert.date}
+                    </div>
+                  )}
+                </div>
+              </a>
+            );
+          }
+          return (
+            <div
+              key={cert.file}
+              className={`flex flex-col overflow-hidden border ${ac.border} rounded-sm bg-slate-900/40`}
+            >
+              {/* Certificate-style decorative preview — same h-44 as image cards */}
+              <div
+                className={`relative h-44 ${ac.bg} flex flex-col items-center justify-center p-5 text-center`}
+              >
+                {/* Corner marks */}
+                <span
+                  className={`absolute top-3 left-3 w-4 h-4 border-t border-l ${ac.border} opacity-50`}
+                />
+                <span
+                  className={`absolute top-3 right-3 w-4 h-4 border-t border-r ${ac.border} opacity-50`}
+                />
+                <span
+                  className={`absolute bottom-3 left-3 w-4 h-4 border-b border-l ${ac.border} opacity-50`}
+                />
+                <span
+                  className={`absolute bottom-3 right-3 w-4 h-4 border-b border-r ${ac.border} opacity-50`}
+                />
+                {/* Faint inner frame */}
+                <div
+                  className={`absolute inset-4 border ${ac.border} opacity-15 pointer-events-none`}
+                />
+                {/* PDF badge */}
+                <div
+                  className={`absolute top-2 right-2 text-[9px] font-mono uppercase tracking-widest px-1.5 py-0.5 rounded-sm ${ac.bg} ${ac.text} border ${ac.border}`}
+                >
+                  pdf
+                </div>
+                {/* Issuer */}
+                <div
+                  className={`text-[9px] font-mono uppercase tracking-widest ${ac.text} opacity-70 mb-2`}
+                >
+                  {cert.issuer}
+                </div>
+                {/* Seal */}
+                <div
+                  className={`w-9 h-9 rounded-full border-2 ${ac.border} flex items-center justify-center mb-3 opacity-60`}
+                >
+                  <div className={`w-4 h-4 rounded-full border ${ac.border}`} />
+                </div>
+                {/* Course name */}
+                <div className="text-xs font-mono font-semibold text-slate-100 leading-snug line-clamp-2 px-1">
+                  {cert.name}
+                </div>
+                {/* Date */}
+                {cert.date && (
+                  <div
+                    className={`text-[9px] font-mono ${ac.text} mt-2 opacity-60`}
+                  >
+                    {cert.date}
+                  </div>
+                )}
+              </div>
+              {/* Action bar */}
+              <div className="flex gap-2 p-3">
+                <a
+                  href={cert.file}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 text-center px-3 py-1.5 font-mono text-xs border border-slate-700 hover:border-slate-500 text-slate-300 transition-colors"
+                >
+                  View
+                </a>
+                <a
+                  href={cert.file}
+                  download
+                  className={`flex-1 text-center px-3 py-1.5 font-mono text-xs ${ac.bg} border ${ac.border} ${ac.text} hover:opacity-80 transition-opacity`}
+                >
+                  ↓ Save
+                </a>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// --- AWARDS & RECOGNITION ---
+
+interface Award {
+  file: string;
+  title: string;
+  event: string;
+  date: string;
+  description?: string;
+}
+
+function AwardsSection() {
+  // ── Add your award photos to public/ and fill in entries here ──
+  // Name your files AWARD_1.jpg, AWARD_2.jpg, etc. (jpg/jpeg/png/webp all work)
+  const awards: Award[] = [
+    // Example entry — duplicate and fill in for each photo:
+    {
+      file: "/AWARD_1.jpg",
+      title: "Employee Recognition Award",
+      event: "Xavor Corporation",
+      date: "2025",
+      description: "Recognition of efforts put in through out the year",
+    },
+    {
+      file: "/AWARD_3.jpeg",
+      title: "Certificate of Appreciation",
+      event: "Xavor Corporation",
+      date: "2024",
+      description: "On providing exceptional customer services to the clients",
+    },
+    {
+      file: "/AWARD_2.jpg",
+      title: "Certificate of Appreciation",
+      event: "Xavor Corporation",
+      date: "2023",
+      description: "On providing exception customer services to the clients",
+    },
+    {
+      file: "/AWARD_4.jpeg",
+      title: "Certificate of Excellence",
+      event: "Xavor Corporation",
+      date: "2022-2023",
+      description: "In the recognition of excellent performance",
+    },
+  ];
+
+  return (
+    <div className="space-y-6 animate-fadeIn">
+      <div>
+        <h1 className="text-3xl font-serif text-slate-100 mb-3">
+          Awards &amp; Recognition
+        </h1>
+        <p className="text-sm text-slate-400 border-l-2 border-rose-500 pl-4">
+          Excellence awards, recognition events, and professional achievements.
+        </p>
+      </div>
+
+      {awards.length === 0 ? (
+        <div className="border border-dashed border-slate-700 rounded-sm p-10 text-center space-y-3">
+          <div className="text-slate-600 font-mono text-xs uppercase tracking-widest">
+            No photos added yet
+          </div>
+          <p className="text-slate-500 text-xs font-mono max-w-sm mx-auto leading-relaxed">
+            Copy your award photos into{" "}
+            <span className="text-rose-400">public/</span> as{" "}
+            <span className="text-rose-400">AWARD_1.jpg</span>,{" "}
+            <span className="text-rose-400">AWARD_2.jpg</span>, etc., then fill
+            in the <span className="text-rose-400">awards</span> array in{" "}
+            <span className="text-rose-400">page.tsx</span>.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {awards.map((award) => (
+            <a
+              key={award.file}
+              href={award.file}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative flex flex-col overflow-hidden border border-rose-500/30 hover:border-rose-500/60 rounded-sm bg-slate-900/40 transition-all duration-300"
+            >
+              {/* Photo */}
+              <div className="relative h-56 overflow-hidden bg-slate-800">
+                <Image
+                  src={award.file}
+                  alt={award.title}
+                  fill
+                  className="object-cover grayscale group-hover:grayscale-0 opacity-80 group-hover:opacity-100 transition-all duration-500"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
+                {/* Date badge */}
+                <div className="absolute top-2 left-2 text-[9px] font-mono uppercase tracking-widest px-2 py-0.5 rounded-sm bg-rose-950/60 text-rose-400 border border-rose-500/40">
+                  {award.date}
+                </div>
+              </div>
+              {/* Caption */}
+              <div className="p-3 flex flex-col gap-1">
+                <div className="text-xs font-mono font-semibold text-slate-100 leading-snug">
+                  {award.title}
+                </div>
+                <div className="text-[10px] font-mono text-slate-500">
+                  {award.event}
+                </div>
+                {award.description && (
+                  <div className="text-[10px] font-mono text-slate-600 mt-1 leading-relaxed">
+                    {award.description}
+                  </div>
+                )}
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
