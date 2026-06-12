@@ -21,7 +21,7 @@ export default function PDFPreview({ url, className = "" }: Props) {
         // Worker is served statically from /public — works with both Turbopack and webpack
         pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 
-        const pdf = await pdfjs.getDocument({ url, isEvalSupported: false }).promise;
+        const pdf = await pdfjs.getDocument({ url }).promise;
         if (cancelled) return;
 
         const page = await pdf.getPage(1);
@@ -46,7 +46,7 @@ export default function PDFPreview({ url, className = "" }: Props) {
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
-        await page.render({ canvasContext: ctx, viewport }).promise;
+        await page.render({ canvas, viewport }).promise;
         if (!cancelled) setState("ready");
       } catch (err) {
         console.error("PDFPreview render error:", err);
