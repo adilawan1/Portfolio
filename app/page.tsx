@@ -796,28 +796,28 @@ function AwardsSection() {
   const awards: Award[] = [
     // Example entry — duplicate and fill in for each photo:
     {
-      file: "/AWARD_1.jpg",
+      file: "/Award_1.jpg",
       title: "Employee Recognition Award",
       event: "Xavor Corporation",
       date: "2025",
       description: "Recognition of efforts put in through out the year",
     },
     {
-      file: "/AWARD_3.jpeg",
+      file: "/Award_3.jpeg",
       title: "Certificate of Appreciation",
       event: "Xavor Corporation",
       date: "2024",
       description: "On providing exceptional customer services to the clients",
     },
     {
-      file: "/AWARD_2.jpg",
+      file: "/Award_2.jpg",
       title: "Certificate of Appreciation",
       event: "Xavor Corporation",
       date: "2023",
       description: "On providing exception customer services to the clients",
     },
     {
-      file: "/AWARD_4.jpeg",
+      file: "/Award_4.jpeg",
       title: "Certificate of Excellence",
       event: "Xavor Corporation",
       date: "2022-2023",
