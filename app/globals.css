@@ -58,18 +58,21 @@ body {
 }
 
 /* ============================================================
-   GLITCH — apply to the name heading
+   GLITCH — fires once on hover only (no constant motion)
    ============================================================ */
 @keyframes glitch {
-  0%,  88%, 100% { transform: none;          text-shadow: none; }
-  90%            { transform: skewX(-6deg);  text-shadow:  3px 0 #f0f, -3px 0 #0ff; }
-  92%            { transform: skewX( 4deg);  text-shadow: -3px 0 #f0f,  3px 0 #0ff; }
-  94%            { transform: skewX(-2deg);  text-shadow:  2px 0 #f0f, -2px 0 #0ff; }
-  96%            { transform: skewX( 1deg);  text-shadow: none; }
+  0%          { transform: none;          text-shadow: none; }
+  20%         { transform: skewX(-6deg);  text-shadow:  3px 0 #f0f, -3px 0 #0ff; }
+  40%         { transform: skewX( 4deg);  text-shadow: -3px 0 #f0f,  3px 0 #0ff; }
+  60%         { transform: skewX(-2deg);  text-shadow:  2px 0 #f0f, -2px 0 #0ff; }
+  80%         { transform: skewX( 1deg);  text-shadow: none; }
+  100%        { transform: none;          text-shadow: none; }
 }
 .animate-glitch {
-  animation: glitch 6s infinite;
   display: inline-block;
+}
+.animate-glitch:hover {
+  animation: glitch 0.45s ease forwards;
 }
 
 /* ============================================================

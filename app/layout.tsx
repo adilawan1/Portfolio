@@ -13,9 +13,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ahmed Adil's Portfolio",
+  title: "Ahmed Adil — Senior Software Engineer & AI Researcher",
   description:
-    "An Interactive Resume which attempts to answer any questions on behalf of Ahmed Adil and provides details of some of his projects",
+    "Portfolio of Ahmed Adil: 4 years of enterprise software engineering at Xavor Corporation, MS AI at LUMS (3.76 GPA), research in anomaly detection and autonomous navigation. Features an AI assistant trained on his resume.",
+  openGraph: {
+    title: "Ahmed Adil — Senior Software Engineer & AI Researcher",
+    description:
+      "Enterprise SaaS · Deep Learning · Autonomous Robotics · RAG Systems. Ask my AI assistant anything about my work.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Ahmed Adil — Senior Software Engineer & AI Researcher",
+    description:
+      "Enterprise SaaS · Deep Learning · Autonomous Robotics. Portfolio with an AI assistant trained on my resume.",
+  },
 };
 
 export default function RootLayout({
