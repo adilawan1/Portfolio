@@ -2,22 +2,34 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { createClient } from "@supabase/supabase-js";
-import { GoogleGenAI } from "@google/genai";
 import { readFile } from "fs/promises";
 import { join } from "path";
 import { getDocumentProxy, extractText } from "unpdf";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const geminiApiKey = process.env.GEMINI_API_KEY;
+const jinaApiKey = process.env.JINA_API_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey || !geminiApiKey) {
-  console.error("❌ Missing Environment Variables!");
+if (!supabaseUrl || !supabaseAnonKey || !jinaApiKey) {
+  console.error("❌ Missing Environment Variables! Need JINA_API_KEY.");
   process.exit(1);
 }
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
-const aiClient = new GoogleGenAI({ apiKey: geminiApiKey });
+
+async function getEmbedding(text) {
+  const res = await fetch("https://api.jina.ai/v1/embeddings", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${jinaApiKey}`,
+    },
+    body: JSON.stringify({ model: "jina-embeddings-v2-base-en", input: [text] }),
+  });
+  if (!res.ok) throw new Error(`Jina error: ${res.status} ${await res.text()}`);
+  const data = await res.json();
+  return data.data[0].embedding;
+}
 
 // 👇 Helper function to pause execution
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -91,19 +103,8 @@ async function ingest() {
               `   👉 Embedding chunk ${i + 1}/${docChunks.length} (Attempt ${retries + 1})...\r`,
             );
 
-            const embedResponse = await aiClient.models.embedContent({
-              model: "gemini-embedding-001",
-              contents: taggedContent,
-              config: { outputDimensionality: 768 },
-            });
-
-            const values = embedResponse.embeddings?.[0]?.values;
-            if (values) {
-              allDatabaseRows.push({
-                content: taggedContent,
-                embedding: values,
-              });
-            }
+            const values = await getEmbedding(taggedContent);
+            allDatabaseRows.push({ content: taggedContent, embedding: values });
 
             success = true;
             // Still keep a small baseline delay
@@ -112,7 +113,8 @@ async function ingest() {
             // Catch 429 Rate Limits AND Node.js network connection drops
             if (
               err.message?.includes("429") ||
-              err.status === "RESOURCE_EXHAUSTED" ||
+              err.message?.includes("rate_limit") ||
+              err.message?.includes("Jina error: 429") ||
               err.message?.includes("fetch failed") ||
               err.code === "UND_ERR_CONNECT_TIMEOUT"
             ) {
@@ -138,8 +140,9 @@ async function ingest() {
       `\n\n4. [INSERT] Uploading ${allDatabaseRows.length} total chunks to Supabase...`,
     );
 
-    // Optional: Delete old data so you don't get duplicates (uncomment if desired)
-    // await supabase.from('documents').delete().neq('content', 'placeholder');
+    // Clear old embeddings — required when switching embedding models
+    console.log("🗑️  Clearing old embeddings from Supabase...");
+    await supabase.from('documents').delete().neq('content', 'placeholder');
 
     const { error } = await supabase
       .from("documents")

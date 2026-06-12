@@ -1,16 +1,35 @@
 "use client";
 
-import { useState } from "react";
-import ChatBox from "@/components/ChatBox"; // Your existing chat component
+import { useState, useEffect } from "react";
+import ChatBox from "@/components/ChatBox";
 import Image from "next/image";
+
+function TypewriterText({ text, className }: { text: string; className?: string }) {
+  const [displayed, setDisplayed] = useState("");
+  useEffect(() => {
+    let i = 0;
+    setDisplayed("");
+    const timer = setInterval(() => {
+      i++;
+      setDisplayed(text.slice(0, i));
+      if (i >= text.length) clearInterval(timer);
+    }, 55);
+    return () => clearInterval(timer);
+  }, [text]);
+  return (
+    <span className={className}>
+      {displayed}
+      <span className="animate-pulse opacity-70">▌</span>
+    </span>
+  );
+}
 
 export default function PortfolioDashboard() {
   const [activeProject, setActiveProject] = useState("profile");
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   return (
-    // Changed md:flex-row to lg:flex-row
-    <div className="min-h-screen bg-slate-950 text-slate-300 font-sans p-4 lg:p-8 flex flex-col lg:flex-row gap-6 relative overflow-x-hidden">
+    <div className="scanlines min-h-screen bg-slate-950 bg-grid text-slate-300 font-sans p-4 lg:p-8 flex flex-col lg:flex-row gap-6 relative overflow-x-hidden">
       {/* LEFT PANEL: The Academic/Visual Showcase */}
       <div className="flex-1 flex flex-col gap-6 w-full">
         {/* Navigation/Telemetry Header - Changed md style overrides to lg */}
@@ -127,6 +146,21 @@ function NasaTelemetryProject() {
         <br /> Tech Stack: Python, TensorFlow, PyTorch, CUDA, NumPy, Pandas,
         Scikit-Learn, Matplotlib, Google Colab, Kaggle CLI, LaTeX
       </div>
+      {/* Metric stat cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {[
+          { label: "Point-Adj F1", value: "0.953", color: "text-blue-400", border: "border-blue-500/40" },
+          { label: "Recall",       value: "1.00",  color: "text-emerald-400", border: "border-emerald-500/40" },
+          { label: "F1 Lift (vs baseline)", value: "+0.178", color: "text-purple-400", border: "border-purple-500/40" },
+          { label: "Channels",     value: "6",     color: "text-slate-300",   border: "border-slate-600/40" },
+        ].map((stat) => (
+          <div key={stat.label} className={`border ${stat.border} bg-slate-900/40 p-3 rounded-sm text-center animate-glow-pulse ${stat.color}`}>
+            <div className="text-2xl font-mono font-bold">{stat.value}</div>
+            <div className="text-[10px] font-mono text-slate-500 mt-1 uppercase tracking-wider">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+
       {/* Your existing figure container */}
       <figure className="border border-slate-700 bg-slate-950 p-4 rounded-sm">
         <div className="relative w-full h-64 md:h-80 lg:h-96 overflow-hidden border border-slate-800">
@@ -209,6 +243,21 @@ function ROS2Project() {
         <br />
         Tech Stack: Python, ROS 2, OpenCV, NumPy, cv_bridge, rclpy
       </div>
+      {/* Metric stat cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {[
+          { label: "Worlds Passed", value: "41/50",  color: "text-emerald-400", border: "border-emerald-500/40" },
+          { label: "Success Rate",  value: "82%",    color: "text-blue-400",    border: "border-blue-500/40" },
+          { label: "Avg Score",     value: "0.324",  color: "text-purple-400",  border: "border-purple-500/40" },
+          { label: "Sensors",       value: "2",      color: "text-slate-300",   border: "border-slate-600/40" },
+        ].map((stat) => (
+          <div key={stat.label} className={`border ${stat.border} bg-slate-900/40 p-3 rounded-sm text-center animate-glow-pulse ${stat.color}`}>
+            <div className="text-2xl font-mono font-bold">{stat.value}</div>
+            <div className="text-[10px] font-mono text-slate-500 mt-1 uppercase tracking-wider">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+
       {/* Your existing figure container */}
       <figure className="border border-slate-700 bg-slate-950 p-4 rounded-sm">
         <div className="relative w-full h-64 md:h-80 lg:h-96 overflow-hidden border border-slate-800">
@@ -288,9 +337,9 @@ function ProfileResume() {
     <div className="space-y-8 animate-fadeIn">
       {/* Header Profile Section */}
       <div className="border-b border-slate-800 pb-6">
-        <h1 className="text-4xl font-serif text-slate-100 mb-2">Ahmed Adil</h1>
+        <h1 className="text-4xl font-serif text-slate-100 mb-2 animate-glitch">Ahmed Adil</h1>
         <div className="text-sm font-mono text-purple-400 border-l-2 border-purple-500 pl-4 py-1">
-          Senior Software Engineer & AI Researcher
+          <TypewriterText text="Senior Software Engineer & AI Researcher" />
         </div>
         <p className="mt-4 text-slate-400 leading-relaxed">
           Bridging the gap between multi-tenant enterprise architecture and

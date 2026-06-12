@@ -1,19 +1,28 @@
 import { streamText, convertToModelMessages } from "ai";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createClient } from "@supabase/supabase-js";
-import { GoogleGenAI } from "@google/genai";
-
-// Create a custom google provider instance using our specific environment variable
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
-// Initialize clients securely
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
-const aiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+
+async function getEmbedding(text: string): Promise<number[]> {
+  const res = await fetch("https://api.jina.ai/v1/embeddings", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${process.env.JINA_API_KEY}`,
+    },
+    body: JSON.stringify({ model: "jina-embeddings-v2-base-en", input: [text] }),
+  });
+  if (!res.ok) throw new Error(`Jina embedding error: ${res.status} ${await res.text()}`);
+  const data = await res.json();
+  return data.data[0].embedding;
+}
 
 export async function POST(req: Request) {
   try {
@@ -24,21 +33,7 @@ export async function POST(req: Request) {
     const latestText =
       latestMessage.text || latestMessage.parts?.[0]?.text || "";
 
-    // Convert the visitor's question into a math vector using the extracted text
-    const embedResponse = await aiClient.models.embedContent({
-      model: "gemini-embedding-001",
-      contents: latestText,
-      config: {
-        outputDimensionality: 768,
-      },
-    });
-
-    // Explicitly check for undefined data before pulling values
-    if (!embedResponse.embeddings || embedResponse.embeddings.length === 0) {
-      throw new Error("Google API returned an empty embedding array.");
-    }
-
-    const embedding = embedResponse.embeddings[0].values;
+    const embedding = await getEmbedding(latestText);
 
     // 2. Search Supabase for the closest matching resume chunks
     const { data: documents, error } = await supabase.rpc("match_documents", {

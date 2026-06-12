@@ -40,6 +40,13 @@ export default function ChatBox() {
 
   const isLoading = status === "submitted" || status === "streaming";
 
+  const suggestedQuestions = [
+    "What is your current CGPA?",
+    "Tell me about the NASA telemetry project",
+    "What was your role at Xavor Corporation?",
+    "What are your PhD research goals?",
+  ];
+
   return (
     <div className="flex flex-col h-full w-full bg-slate-950 text-slate-300 font-mono text-sm select-none border-none">
       {/* TERMINAL DISPLAY PANEL */}
@@ -48,15 +55,28 @@ export default function ChatBox() {
         className="flex-1 p-4 overflow-y-auto space-y-4 scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent"
       >
         {messages.length === 0 && (
-          <div className="text-slate-500 text-xs border border-slate-900 p-3 bg-slate-900/20 rounded-sm">
-            <p className="text-blue-400 font-bold mb-1">
-              === CO-PILOT AGENT CORE INITIALIZED ===
-            </p>
-            <p>Ready to analyze high-dimensional vectors.</p>
-            <p>
-              Query me regarding my experience as a Software Engineer, MS AI
-              research, or PhD goals.
-            </p>
+          <div className="space-y-3">
+            <div className="text-slate-500 text-xs border border-slate-900 p-3 bg-slate-900/20 rounded-sm">
+              <p className="text-blue-400 font-bold mb-1">
+                === CO-PILOT AGENT CORE INITIALIZED ===
+              </p>
+              <p>Ready to analyze high-dimensional vectors.</p>
+              <p>
+                Query me regarding my experience as a Software Engineer, MS AI
+                research, or PhD goals.
+              </p>
+            </div>
+            <div className="flex flex-col gap-2">
+              {suggestedQuestions.map((q) => (
+                <button
+                  key={q}
+                  onClick={() => { sendMessage({ text: q }); }}
+                  className="text-left px-3 py-2 text-xs font-mono text-slate-400 border border-slate-800 bg-slate-900/30 hover:border-blue-500/50 hover:text-blue-300 hover:bg-blue-950/20 transition-all duration-200 rounded-sm"
+                >
+                  <span className="text-slate-600 mr-1">›</span> {q}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 

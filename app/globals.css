@@ -24,3 +24,89 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ============================================================
+   FADE IN
+   ============================================================ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.4s ease-out both;
+}
+
+/* ============================================================
+   TYPEWRITER — apply to a span with overflow:hidden
+   ============================================================ */
+@keyframes typewriter {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+@keyframes blink-caret {
+  0%, 100% { border-color: transparent; }
+  50%      { border-color: currentColor; }
+}
+.animate-typewriter {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid currentColor;
+  animation:
+    typewriter   2s steps(40, end) 0.3s both,
+    blink-caret  0.75s step-end   infinite;
+}
+
+/* ============================================================
+   GLITCH — apply to the name heading
+   ============================================================ */
+@keyframes glitch {
+  0%,  88%, 100% { transform: none;          text-shadow: none; }
+  90%            { transform: skewX(-6deg);  text-shadow:  3px 0 #f0f, -3px 0 #0ff; }
+  92%            { transform: skewX( 4deg);  text-shadow: -3px 0 #f0f,  3px 0 #0ff; }
+  94%            { transform: skewX(-2deg);  text-shadow:  2px 0 #f0f, -2px 0 #0ff; }
+  96%            { transform: skewX( 1deg);  text-shadow: none; }
+}
+.animate-glitch {
+  animation: glitch 6s infinite;
+  display: inline-block;
+}
+
+/* ============================================================
+   SCANLINE OVERLAY — fixed pseudo-element on .scanlines
+   ============================================================ */
+.scanlines::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 3px,
+    rgba(0, 0, 0, 0.06) 3px,
+    rgba(0, 0, 0, 0.06) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ============================================================
+   BACKGROUND GRID — add class to wrapper div
+   ============================================================ */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(100, 116, 139, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(100, 116, 139, 0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ============================================================
+   STAT CARD GLOW PULSE
+   ============================================================ */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 4px 0 currentColor; }
+  50%       { box-shadow: 0 0 12px 2px currentColor; }
+}
+.animate-glow-pulse {
+  animation: glow-pulse 2.5s ease-in-out infinite;
+}
