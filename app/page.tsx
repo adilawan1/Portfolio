@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import ChatBox from "@/components/ChatBox";
+import PDFPreview from "@/components/PDFPreview";
 import Image from "next/image";
 
 function TypewriterText({
@@ -702,57 +703,16 @@ function CertificationsSection() {
               key={cert.file}
               className={`flex flex-col overflow-hidden border ${ac.border} rounded-sm bg-slate-900/40`}
             >
-              {/* Certificate-style decorative preview — same h-44 as image cards */}
-              <div
-                className={`relative h-44 ${ac.bg} flex flex-col items-center justify-center p-5 text-center`}
-              >
-                {/* Corner marks */}
-                <span
-                  className={`absolute top-3 left-3 w-4 h-4 border-t border-l ${ac.border} opacity-50`}
+              {/* Rendered PDF first-page preview */}
+              <div className="relative h-44 overflow-hidden bg-white group">
+                <PDFPreview
+                  url={cert.file}
+                  className="absolute inset-0 w-full h-full grayscale group-hover:grayscale-0 transition-all duration-500"
                 />
-                <span
-                  className={`absolute top-3 right-3 w-4 h-4 border-t border-r ${ac.border} opacity-50`}
-                />
-                <span
-                  className={`absolute bottom-3 left-3 w-4 h-4 border-b border-l ${ac.border} opacity-50`}
-                />
-                <span
-                  className={`absolute bottom-3 right-3 w-4 h-4 border-b border-r ${ac.border} opacity-50`}
-                />
-                {/* Faint inner frame */}
-                <div
-                  className={`absolute inset-4 border ${ac.border} opacity-15 pointer-events-none`}
-                />
-                {/* PDF badge */}
-                <div
-                  className={`absolute top-2 right-2 text-[9px] font-mono uppercase tracking-widest px-1.5 py-0.5 rounded-sm ${ac.bg} ${ac.text} border ${ac.border}`}
-                >
+                <div className="absolute inset-0 bg-linear-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none" />
+                <div className={`absolute top-2 right-2 text-[9px] font-mono uppercase tracking-widest px-1.5 py-0.5 rounded-sm ${ac.bg} ${ac.text} border ${ac.border}`}>
                   pdf
                 </div>
-                {/* Issuer */}
-                <div
-                  className={`text-[9px] font-mono uppercase tracking-widest ${ac.text} opacity-70 mb-2`}
-                >
-                  {cert.issuer}
-                </div>
-                {/* Seal */}
-                <div
-                  className={`w-9 h-9 rounded-full border-2 ${ac.border} flex items-center justify-center mb-3 opacity-60`}
-                >
-                  <div className={`w-4 h-4 rounded-full border ${ac.border}`} />
-                </div>
-                {/* Course name */}
-                <div className="text-xs font-mono font-semibold text-slate-100 leading-snug line-clamp-2 px-1">
-                  {cert.name}
-                </div>
-                {/* Date */}
-                {cert.date && (
-                  <div
-                    className={`text-[9px] font-mono ${ac.text} mt-2 opacity-60`}
-                  >
-                    {cert.date}
-                  </div>
-                )}
               </div>
               {/* Action bar */}
               <div className="flex gap-2 p-3">
