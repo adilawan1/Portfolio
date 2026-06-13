@@ -46,7 +46,9 @@ export default function PDFPreview({ url, className = "" }: Props) {
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
-        await page.render({ canvas, viewport }).promise;
+        // canvas: null tells pdfjs v6 to use canvasContext path (the stable render path).
+        // Passing canvas alone uses an internal path that behaves differently.
+        await page.render({ canvas: null, canvasContext: ctx, viewport }).promise;
         if (!cancelled) setState("ready");
       } catch (err) {
         console.error("PDFPreview render error:", err);

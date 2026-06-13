@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ChatBox from "@/components/ChatBox";
 import PDFPreview from "@/components/PDFPreview";
 import Image from "next/image";
@@ -39,47 +39,60 @@ function TypewriterText({
 export default function PortfolioDashboard() {
   const [activeProject, setActiveProject] = useState("profile");
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const mainRef = useRef<HTMLElement>(null);
+
+  const handleTabChange = (tab: string) => {
+    setActiveProject(tab);
+    // Scroll the inner panel back to top (desktop) and the window (mobile)
+    if (mainRef.current) mainRef.current.scrollTop = 0;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="scanlines min-h-screen bg-slate-950 bg-grid text-slate-300 font-sans p-4 lg:p-8 flex flex-col lg:flex-row gap-6 relative overflow-x-hidden">
       {/* LEFT PANEL: The Academic/Visual Showcase */}
       <div className="flex-1 flex flex-col gap-6 w-full">
-        {/* Navigation/Telemetry Header - Changed md style overrides to lg */}
-        <header className="border-b border-slate-800 pb-4 flex gap-4 overflow-x-auto whitespace-nowrap scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
-          <button
-            onClick={() => setActiveProject("profile")}
-            className={`px-4 py-2 font-mono text-sm border transition-colors ${activeProject === "profile" ? "border-purple-500 text-purple-400 bg-purple-900/20" : "border-slate-800 hover:border-slate-600"}`}
-          >
-            [0] System.Profile
-          </button>
-          <button
-            onClick={() => setActiveProject("nasa-telemetry")}
-            className={`px-4 py-2 font-mono text-sm border transition-colors ${activeProject === "nasa-telemetry" ? "border-blue-500 text-blue-400 bg-blue-900/20" : "border-slate-800 hover:border-slate-600"}`}
-          >
-            [1] NASA Telemetry
-          </button>
-          <button
-            onClick={() => setActiveProject("ros2-barn")}
-            className={`px-4 py-2 font-mono text-sm border transition-colors ${activeProject === "ros2-barn" ? "border-emerald-500 text-emerald-400 bg-emerald-900/20" : "border-slate-800 hover:border-slate-600"}`}
-          >
-            [2] BARN Challenge ROS 2
-          </button>
-          <button
-            onClick={() => setActiveProject("certifications")}
-            className={`px-4 py-2 font-mono text-sm border transition-colors ${activeProject === "certifications" ? "border-amber-500 text-amber-400 bg-amber-900/20" : "border-slate-800 hover:border-slate-600"}`}
-          >
-            [3] Certifications
-          </button>
-          <button
-            onClick={() => setActiveProject("awards")}
-            className={`px-4 py-2 font-mono text-sm border transition-colors ${activeProject === "awards" ? "border-rose-500 text-rose-400 bg-rose-900/20" : "border-slate-800 hover:border-slate-600"}`}
-          >
-            [4] Awards
-          </button>
-        </header>
+        {/* Navigation/Telemetry Header */}
+        <div className="relative">
+          <header className="border-b border-slate-800 pb-4 flex gap-4 overflow-x-auto whitespace-nowrap scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
+            <button
+              onClick={() => handleTabChange("profile")}
+              className={`px-4 py-2 font-mono text-sm border transition-colors ${activeProject === "profile" ? "border-purple-500 text-purple-400 bg-purple-900/20" : "border-slate-800 hover:border-slate-600"}`}
+            >
+              [0] System.Profile
+            </button>
+            <button
+              onClick={() => handleTabChange("nasa-telemetry")}
+              className={`px-4 py-2 font-mono text-sm border transition-colors ${activeProject === "nasa-telemetry" ? "border-blue-500 text-blue-400 bg-blue-900/20" : "border-slate-800 hover:border-slate-600"}`}
+            >
+              [1] NASA Telemetry
+            </button>
+            <button
+              onClick={() => handleTabChange("ros2-barn")}
+              className={`px-4 py-2 font-mono text-sm border transition-colors ${activeProject === "ros2-barn" ? "border-emerald-500 text-emerald-400 bg-emerald-900/20" : "border-slate-800 hover:border-slate-600"}`}
+            >
+              [2] BARN Challenge ROS 2
+            </button>
+            <button
+              onClick={() => handleTabChange("certifications")}
+              className={`px-4 py-2 font-mono text-sm border transition-colors ${activeProject === "certifications" ? "border-amber-500 text-amber-400 bg-amber-900/20" : "border-slate-800 hover:border-slate-600"}`}
+            >
+              [3] Certifications
+            </button>
+            <button
+              onClick={() => handleTabChange("awards")}
+              className={`px-4 py-2 font-mono text-sm border transition-colors ${activeProject === "awards" ? "border-rose-500 text-rose-400 bg-rose-900/20" : "border-slate-800 hover:border-slate-600"}`}
+            >
+              [4] Awards
+            </button>
+          </header>
+          {/* Right-edge fade — signals more tabs are off-screen on mobile */}
+          <div className="pointer-events-none absolute right-0 top-0 bottom-4 w-12 bg-linear-to-l from-slate-950 to-transparent lg:hidden" />
+        </div>
 
         {/* Dynamic Project Content Area */}
         <main
+          ref={mainRef}
           key={activeProject}
           className="flex-1 bg-slate-900/50 border border-slate-800 p-4 lg:p-8 rounded-sm overflow-y-auto animate-fadeIn"
         >
@@ -701,10 +714,15 @@ function CertificationsSection() {
           return (
             <div
               key={cert.file}
-              className={`flex flex-col overflow-hidden border ${ac.border} rounded-sm bg-slate-900/40`}
+              className={`group flex flex-col overflow-hidden border ${ac.border} rounded-sm bg-slate-900/40 hover:bg-slate-900/70 transition-all duration-300`}
             >
-              {/* Rendered PDF first-page preview */}
-              <div className="relative h-44 overflow-hidden bg-white group">
+              {/* Preview thumbnail — clicking opens the cert */}
+              <a
+                href={cert.file}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative h-44 overflow-hidden bg-white block"
+              >
                 <PDFPreview
                   url={cert.file}
                   className="absolute inset-0 w-full h-full grayscale group-hover:grayscale-0 transition-all duration-500"
@@ -713,9 +731,23 @@ function CertificationsSection() {
                 <div className={`absolute top-2 right-2 text-[9px] font-mono uppercase tracking-widest px-1.5 py-0.5 rounded-sm ${ac.bg} ${ac.text} border ${ac.border}`}>
                   pdf
                 </div>
+              </a>
+              {/* Metadata strip — matches image card layout */}
+              <div className="p-3 flex-1 flex flex-col gap-1">
+                <div className="text-xs font-mono font-semibold text-slate-100 leading-snug">
+                  {cert.name}
+                </div>
+                <div className="text-[10px] font-mono text-slate-500">
+                  {cert.issuer}
+                </div>
+                {cert.date && (
+                  <div className={`text-[10px] font-mono mt-auto pt-2 ${ac.text}`}>
+                    {cert.date}
+                  </div>
+                )}
               </div>
               {/* Action bar */}
-              <div className="flex gap-2 p-3">
+              <div className="flex gap-2 px-3 pb-3">
                 <a
                   href={cert.file}
                   target="_blank"
@@ -774,7 +806,7 @@ function AwardsSection() {
       title: "Certificate of Appreciation",
       event: "Xavor Corporation",
       date: "2023",
-      description: "On providing exception customer services to the clients",
+      description: "On providing exceptional customer services to the clients",
     },
     {
       file: "/Award_4.jpeg",
@@ -876,6 +908,14 @@ function ProfileResume() {
           platforms handling 20+ clients to autonomous navigation pipelines that
           cleared 82% of benchmark worlds.
         </p>
+
+        {/* ── Availability badge ── */}
+        <div className="mt-4">
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 text-[11px] font-mono bg-emerald-950/40 border border-emerald-500/40 text-emerald-400 rounded-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
+            Open to PhD positions &amp; consulting engagements
+          </span>
+        </div>
 
         {/* ── Contact & Social Links ── */}
         <div className="flex flex-wrap gap-2 mt-5">
