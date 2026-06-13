@@ -37,15 +37,45 @@ function TypewriterText({
 }
 
 export default function PortfolioDashboard() {
-  const [activeProject, setActiveProject] = useState("profile");
+  const [activeTab, setActiveTab] = useState("profile");
+  const [workSubTab, setWorkSubTab] = useState("enterprise");
+  const [academicSubTab, setAcademicSubTab] = useState("nasa-telemetry");
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isDark, setIsDark] = useState(true);
   const mainRef = useRef<HTMLElement>(null);
 
-  const handleTabChange = (tab: string) => {
-    setActiveProject(tab);
-    // Scroll the inner panel back to top (desktop) and the window (mobile)
+  useEffect(() => {
+    const saved = localStorage.getItem("portfolio-theme");
+    const dark = saved !== "light";
+    setIsDark(dark);
+    document.documentElement.classList.toggle("light", !dark);
+  }, []);
+
+  const toggleTheme = () => {
+    setIsDark((prev) => {
+      const next = !prev;
+      document.documentElement.classList.toggle("light", !next);
+      localStorage.setItem("portfolio-theme", next ? "dark" : "light");
+      return next;
+    });
+  };
+
+  const scrollToTop = () => {
     if (mainRef.current) mainRef.current.scrollTop = 0;
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    scrollToTop();
+  };
+
+  const handleSubTabChange = (
+    setter: (s: string) => void,
+    tab: string
+  ) => {
+    setter(tab);
+    scrollToTop();
   };
 
   return (
@@ -57,31 +87,31 @@ export default function PortfolioDashboard() {
           <header className="border-b border-slate-800 pb-4 flex gap-4 overflow-x-auto whitespace-nowrap scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
             <button
               onClick={() => handleTabChange("profile")}
-              className={`px-4 py-2 font-mono text-sm border transition-colors ${activeProject === "profile" ? "border-purple-500 text-purple-400 bg-purple-900/20" : "border-slate-800 hover:border-slate-600"}`}
+              className={`px-4 py-2 font-mono text-sm border transition-colors ${activeTab === "profile" ? "border-purple-500 text-purple-400 bg-purple-900/20" : "border-slate-800 hover:border-slate-600"}`}
             >
               [0] System.Profile
             </button>
             <button
-              onClick={() => handleTabChange("nasa-telemetry")}
-              className={`px-4 py-2 font-mono text-sm border transition-colors ${activeProject === "nasa-telemetry" ? "border-blue-500 text-blue-400 bg-blue-900/20" : "border-slate-800 hover:border-slate-600"}`}
+              onClick={() => handleTabChange("work")}
+              className={`px-4 py-2 font-mono text-sm border transition-colors ${activeTab === "work" ? "border-cyan-500 text-cyan-400 bg-cyan-900/20" : "border-slate-800 hover:border-slate-600"}`}
             >
-              [1] NASA Telemetry
+              [1] Work Experience
             </button>
             <button
-              onClick={() => handleTabChange("ros2-barn")}
-              className={`px-4 py-2 font-mono text-sm border transition-colors ${activeProject === "ros2-barn" ? "border-emerald-500 text-emerald-400 bg-emerald-900/20" : "border-slate-800 hover:border-slate-600"}`}
+              onClick={() => handleTabChange("academic")}
+              className={`px-4 py-2 font-mono text-sm border transition-colors ${activeTab === "academic" ? "border-blue-500 text-blue-400 bg-blue-900/20" : "border-slate-800 hover:border-slate-600"}`}
             >
-              [2] BARN Challenge ROS 2
+              [2] Academic Projects
             </button>
             <button
               onClick={() => handleTabChange("certifications")}
-              className={`px-4 py-2 font-mono text-sm border transition-colors ${activeProject === "certifications" ? "border-amber-500 text-amber-400 bg-amber-900/20" : "border-slate-800 hover:border-slate-600"}`}
+              className={`px-4 py-2 font-mono text-sm border transition-colors ${activeTab === "certifications" ? "border-amber-500 text-amber-400 bg-amber-900/20" : "border-slate-800 hover:border-slate-600"}`}
             >
               [3] Certifications
             </button>
             <button
               onClick={() => handleTabChange("awards")}
-              className={`px-4 py-2 font-mono text-sm border transition-colors ${activeProject === "awards" ? "border-rose-500 text-rose-400 bg-rose-900/20" : "border-slate-800 hover:border-slate-600"}`}
+              className={`px-4 py-2 font-mono text-sm border transition-colors ${activeTab === "awards" ? "border-rose-500 text-rose-400 bg-rose-900/20" : "border-slate-800 hover:border-slate-600"}`}
             >
               [4] Awards
             </button>
@@ -93,20 +123,58 @@ export default function PortfolioDashboard() {
         {/* Dynamic Project Content Area */}
         <main
           ref={mainRef}
-          key={activeProject}
+          key={activeTab}
           className="flex-1 bg-slate-900/50 border border-slate-800 p-4 lg:p-8 rounded-sm overflow-y-auto animate-fadeIn"
         >
-          {activeProject === "profile" && <ProfileResume />}
-          {activeProject === "nasa-telemetry" && <NasaTelemetryProject />}
-          {activeProject === "ros2-barn" && <ROS2Project />}
-          {activeProject === "certifications" && <CertificationsSection />}
-          {activeProject === "awards" && <AwardsSection />}
+          {activeTab === "profile" && <ProfileResume />}
+
+          {activeTab === "work" && (
+            <div className="space-y-6">
+              <div className="flex flex-wrap gap-2 pb-4 border-b border-slate-800">
+                <button
+                  onClick={() => handleSubTabChange(setWorkSubTab, "enterprise")}
+                  className={`px-3 py-1.5 font-mono text-xs border transition-colors rounded-sm ${workSubTab === "enterprise" ? "border-cyan-500 text-cyan-400 bg-cyan-900/20" : "border-slate-700 text-slate-500 hover:border-slate-500 hover:text-slate-300"}`}
+                >
+                  ↳ Enterprise Healthcare Platform
+                </button>
+              </div>
+              <div key={workSubTab} className="animate-fadeIn">
+                {workSubTab === "enterprise" && <EnterpriseHealthcarePlatform />}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "academic" && (
+            <div className="space-y-6">
+              <div className="flex flex-wrap gap-2 pb-4 border-b border-slate-800">
+                <button
+                  onClick={() => handleSubTabChange(setAcademicSubTab, "nasa-telemetry")}
+                  className={`px-3 py-1.5 font-mono text-xs border transition-colors rounded-sm ${academicSubTab === "nasa-telemetry" ? "border-blue-500 text-blue-400 bg-blue-900/20" : "border-slate-700 text-slate-500 hover:border-slate-500 hover:text-slate-300"}`}
+                >
+                  ↳ NASA Telemetry
+                </button>
+                <button
+                  onClick={() => handleSubTabChange(setAcademicSubTab, "ros2-barn")}
+                  className={`px-3 py-1.5 font-mono text-xs border transition-colors rounded-sm ${academicSubTab === "ros2-barn" ? "border-emerald-500 text-emerald-400 bg-emerald-900/20" : "border-slate-700 text-slate-500 hover:border-slate-500 hover:text-slate-300"}`}
+                >
+                  ↳ BARN Challenge ROS 2
+                </button>
+              </div>
+              <div key={academicSubTab} className="animate-fadeIn">
+                {academicSubTab === "nasa-telemetry" && <NasaTelemetryProject />}
+                {academicSubTab === "ros2-barn" && <ROS2Project />}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "certifications" && <CertificationsSection />}
+          {activeTab === "awards" && <AwardsSection />}
         </main>
       </div>
 
       {/* RIGHT PANEL: Desktop Persistent AI Co-Pilot */}
       {/* Changed hidden md:flex to hidden lg:flex to prevent the side panel from rendering too early */}
-      <aside className="hidden lg:flex w-full lg:w-[380px] xl:w-[450px] flex-col h-[85vh] sticky top-8">
+      <aside className="hidden lg:flex w-full lg:w-115 xl:w-140 2xl:w-160 flex-col h-[85vh] sticky top-8">
         <div className="border border-slate-800 bg-slate-900/30 p-3 mb-2 flex justify-between items-center text-xs font-mono">
           <span className="text-blue-500 animate-pulse flex items-center gap-1.5">
             <span>●</span>
@@ -125,7 +193,7 @@ export default function PortfolioDashboard() {
       {/* ========================================= */}
       {/* Changed md:hidden to lg:hidden */}
       <div
-        className={`fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${isChatOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+        className={`mobile-backdrop fixed inset-0 z-50 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${isChatOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
       >
         <div
           className={`absolute bottom-0 left-0 right-0 h-[85vh] bg-slate-950 border-t border-slate-700 rounded-t-2xl transition-transform duration-300 flex flex-col shadow-[0_-10px_40px_rgba(0,0,0,0.5)] ${isChatOpen ? "translate-y-0" : "translate-y-full"}`}
@@ -139,7 +207,7 @@ export default function PortfolioDashboard() {
             </div>
             <button
               onClick={() => setIsChatOpen(false)}
-              className="text-slate-400 hover:text-white font-mono text-[10px] tracking-widest px-3 py-1.5 border border-slate-700 rounded bg-slate-800 transition-colors"
+              className="text-slate-400 hover:text-slate-100 font-mono text-[10px] tracking-widest px-3 py-1.5 border border-slate-700 rounded bg-slate-800 transition-colors"
             >
               [ CLOSE ]
             </button>
@@ -151,10 +219,23 @@ export default function PortfolioDashboard() {
         </div>
       </div>
 
-      {/* ========================================= */}
-      {/* MOBILE/TABLET: FLOATING ACTION BUTTON    */}
-      {/* ========================================= */}
-      {/* Changed md:hidden to lg:hidden */}
+      {/* ── Theme Toggle ── */}
+      <button
+        onClick={toggleTheme}
+        className="fixed top-4 right-4 lg:top-6 lg:right-6 z-50 w-9 h-9 flex items-center justify-center border border-slate-700 bg-slate-900/90 backdrop-blur-sm text-slate-400 hover:border-slate-500 hover:text-slate-200 transition-all duration-200 rounded-sm"
+        title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      >
+        {isDark ? (
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+          </svg>
+        ) : (
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+          </svg>
+        )}
+      </button>
+
       <button
         onClick={() => setIsChatOpen(true)}
         className={`lg:hidden fixed bottom-6 right-6 z-40 bg-blue-900/80 text-blue-400 border border-blue-500/50 backdrop-blur-md rounded-full px-5 py-4 shadow-xl hover:bg-blue-800 transition-all duration-300 flex items-center justify-center font-mono text-xs group ${isChatOpen ? "scale-0 opacity-0" : "scale-100 opacity-100"}`}
@@ -1165,6 +1246,491 @@ function ProfileResume() {
           ))}
         </div>
       </div>
+    </div>
+  );
+}
+
+// ─── DIAGRAM PRIMITIVES (used by EnterpriseHealthcarePlatform) ───────────────
+
+function ArchNode({
+  title,
+  desc,
+  className = "",
+}: {
+  title: string;
+  desc?: string;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`border border-slate-700 bg-slate-900/80 p-2 rounded-sm ${className}`}
+    >
+      <div className="text-[10px] font-mono font-semibold text-slate-200 leading-tight">
+        {title}
+      </div>
+      {desc && (
+        <div className="text-[9px] font-mono text-slate-500 mt-0.5 leading-snug">
+          {desc}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FlowArrowV() {
+  return (
+    <div className="flex justify-center text-slate-600 text-sm leading-none py-0.5 select-none">
+      ↓
+    </div>
+  );
+}
+
+function FlowArrowH() {
+  return (
+    <div className="text-slate-600 text-sm self-center shrink-0 select-none px-0.5">
+      →
+    </div>
+  );
+}
+
+// ─── ENTERPRISE HEALTHCARE PLATFORM ─────────────────────────────────────────
+
+function EnterpriseHealthcarePlatform() {
+  const techStack = [
+    "Next.js 15",
+    "React 19",
+    "TypeScript 5",
+    "SASS",
+    "Kontent.ai",
+    "Algolia",
+    "NextAuth",
+    "Azure AD",
+    "FHIR / eSante",
+    "Docker",
+    "AWS",
+    "Framer Motion",
+  ];
+
+  const contributions = [
+    "Architected a collection-based multi-tenant system where one Docker image serves 20+ regional markets — behavior driven entirely by environment variables, with no per-region code forks or separate deployments.",
+    "Built a generic CMS rendering pipeline (ContentZone + 28 block types, variant pattern) enabling marketing to ship entirely new pages without any frontend code changes or deployments.",
+    "Implemented FHIR-standard healthcare practitioner verification (RPPS-ID) against France's national eSante registry — cross-validating name, identifier, and PractitionerRole for medical compliance.",
+    "Eliminated type drift across 40+ CMS content types by code-generating 140+ TypeScript interfaces from the live schema using @kontent-ai/model-generator; renaming a CMS field immediately surfaces as a compile error.",
+    "Engineered ISR with per-content-type revalidation windows and a custom image loader (WebP, lossless, 6 responsive srcset sizes) delivering CDN-scale performance across 20+ locales with zero client-side image JS.",
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <div className="inline-flex items-center gap-2 px-2 py-1 text-[9px] font-mono bg-slate-900 border border-slate-700 text-slate-500 rounded-sm mb-3 select-none">
+          <span className="w-1.5 h-1.5 rounded-full bg-slate-600 inline-block" />
+          NDA · Fortune 500 Global Medical Device Company · Proprietary identifiers omitted
+        </div>
+        <h1 className="text-3xl font-serif text-slate-100 mb-3">
+          Enterprise Healthcare Web Platform
+        </h1>
+        <p className="text-sm text-slate-400 leading-relaxed border-l-2 border-cyan-500 pl-4">
+          Production platform serving 20+ regional markets and millions of
+          monthly visitors — headless CMS-driven marketing site, authenticated
+          healthcare professional portals, multi-region careers system, and 3D
+          medical product visualization, all from a single Next.js 15 codebase.
+        </p>
+      </div>
+
+      {/* Tech badges */}
+      <div className="flex flex-wrap gap-2">
+        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest self-center mr-1">
+          Stack:
+        </span>
+        {techStack.map((t) => (
+          <span
+            key={t}
+            className="px-2 py-0.5 bg-cyan-950/30 border border-cyan-800/40 text-cyan-300 text-[10px] font-mono rounded-sm"
+          >
+            {t}
+          </span>
+        ))}
+      </div>
+
+      {/* Metric cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {[
+          {
+            label: "Regional Markets",
+            value: "20+",
+            color: "text-cyan-400",
+            border: "border-cyan-500/40",
+          },
+          {
+            label: "TS Types (auto-gen)",
+            value: "140+",
+            color: "text-purple-400",
+            border: "border-purple-500/40",
+          },
+          {
+            label: "UI Components",
+            value: "82+",
+            color: "text-emerald-400",
+            border: "border-emerald-500/40",
+          },
+          {
+            label: "3rd-Party Integrations",
+            value: "10+",
+            color: "text-slate-300",
+            border: "border-slate-600/40",
+          },
+        ].map((s) => (
+          <div
+            key={s.label}
+            className={`border ${s.border} bg-slate-900/40 p-3 rounded-sm text-center`}
+          >
+            <div className={`text-2xl font-mono font-bold ${s.color}`}>
+              {s.value}
+            </div>
+            <div className="text-[10px] font-mono text-slate-500 mt-1 leading-tight">
+              {s.label}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── DIAGRAM 1: System Architecture ── */}
+      <figure className="border border-slate-700 bg-slate-950 p-4 rounded-sm">
+        <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-4">
+          Fig. 1 — System Architecture
+        </div>
+
+        {/* Layer 1: Content Authoring */}
+        <div className="border border-cyan-500/30 bg-cyan-950/10 rounded-sm p-3">
+          <div className="text-[9px] font-mono text-cyan-400 uppercase tracking-widest mb-2">
+            Content Authoring Layer
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <ArchNode
+              title="Kontent.ai CMS"
+              desc="40+ content types · 6 collections · multi-locale"
+            />
+            <ArchNode
+              title="Job Posting Backend"
+              desc="AWS DynamoDB · Custom REST API"
+            />
+          </div>
+        </div>
+
+        <FlowArrowV />
+
+        {/* Layer 2: Next.js */}
+        <div className="border border-blue-500/30 bg-blue-950/10 rounded-sm p-3">
+          <div className="text-[9px] font-mono text-blue-400 uppercase tracking-widest mb-2">
+            Next.js 15 App Layer
+          </div>
+          <div className="grid grid-cols-3 gap-2 mb-2">
+            <ArchNode
+              title="Server Components"
+              desc="SSG + ISR · generateStaticParams"
+            />
+            <ArchNode
+              title="API Routes"
+              desc="/api/auth · /api/draft · /api/health"
+            />
+            <ArchNode
+              title="Middleware"
+              desc="i18n routing · locale injection"
+            />
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            <ArchNode
+              title="Client Components"
+              desc="Search · Forms · Auth · IDG wizard"
+            />
+            <ArchNode
+              title="28 Content Blocks"
+              desc="CMS-driven · variant pattern"
+            />
+            <ArchNode title="82+ UI Primitives" desc="Button · Image · Modal · Video" />
+          </div>
+        </div>
+
+        <FlowArrowV />
+
+        {/* Layer 3: Third-Party */}
+        <div className="border border-purple-500/30 bg-purple-950/10 rounded-sm p-3">
+          <div className="text-[9px] font-mono text-purple-400 uppercase tracking-widest mb-2">
+            Third-Party Service Layer
+          </div>
+          <div className="grid grid-cols-4 gap-2 mb-2">
+            <ArchNode title="Algolia" desc="14 locale indices · faceted search" />
+            <ArchNode title="Azure AD" desc="Multi-tenant OIDC/OAuth2 SSO" />
+            <ArchNode title="eSante FHIR" desc="Practitioner verification" />
+            <ArchNode title="reCAPTCHA v3" desc="Bot protection on forms" />
+          </div>
+          <div className="grid grid-cols-4 gap-2">
+            <ArchNode title="Marketo" desc="Lead capture & automation" />
+            <ArchNode title="SketchFab" desc="3D product viewer" />
+            <ArchNode title="Docebo LMS" desc="Learning portal" />
+            <ArchNode title="GTM + PDF API" desc="Analytics · Document gen" />
+          </div>
+        </div>
+
+        <figcaption className="text-xs font-mono text-slate-500 mt-4 border-t border-slate-800 pt-2">
+          Three-tier headless architecture: content authoring → Next.js 15 app
+          layer → third-party services
+        </figcaption>
+      </figure>
+
+      {/* ── DIAGRAM 2: Authentication Architecture ── */}
+      <figure className="border border-slate-700 bg-slate-950 p-4 rounded-sm">
+        <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-4">
+          Fig. 2 — Authentication Architecture
+        </div>
+
+        {/* Entry chain */}
+        <div className="flex items-stretch gap-1 mb-1">
+          <ArchNode title="User" className="flex-1 text-center" />
+          <FlowArrowH />
+          <ArchNode
+            title="Protected Route"
+            desc="pattern-matched paths"
+            className="flex-1 text-center"
+          />
+          <FlowArrowH />
+          <ArchNode
+            title="use-auth Hook"
+            desc="session check"
+            className="flex-1 text-center"
+          />
+        </div>
+
+        <FlowArrowV />
+
+        {/* Decision */}
+        <div className="border border-slate-600 bg-slate-900/60 rounded-sm py-2 px-4 text-center mx-auto max-w-50 mb-1">
+          <div className="text-[10px] font-mono font-semibold text-slate-300">
+            Authenticated?
+          </div>
+        </div>
+
+        {/* Two branches */}
+        <div className="grid grid-cols-2 gap-3 mt-1">
+          {/* YES branch */}
+          <div className="space-y-1 border-r border-slate-800 pr-3">
+            <div className="text-[9px] font-mono text-emerald-500 uppercase tracking-widest text-center">
+              ✓ Session valid
+            </div>
+            <FlowArrowV />
+            <ArchNode
+              title="Render Protected Content"
+              className="text-center border-emerald-500/40 bg-emerald-950/10"
+            />
+          </div>
+
+          {/* NO branch */}
+          <div className="space-y-1 pl-0">
+            <div className="text-[9px] font-mono text-red-500 uppercase tracking-widest text-center">
+              ✗ No session
+            </div>
+            <FlowArrowV />
+            <ArchNode
+              title="Redirect to Login"
+              desc="?callbackUrl=original"
+              className="text-center"
+            />
+            <FlowArrowV />
+            <div className="grid grid-cols-2 gap-1">
+              <ArchNode
+                title="Azure AD"
+                desc="OIDC · AU & FR tenants"
+                className="text-center border-blue-500/40 bg-blue-950/10"
+              />
+              <ArchNode
+                title="RPPS-ID"
+                desc="FHIR · eSante · France"
+                className="text-center border-purple-500/40 bg-purple-950/10"
+              />
+            </div>
+            <FlowArrowV />
+            <ArchNode
+              title="NextAuth Callback"
+              desc="Tenant validation · Session creation"
+              className="text-center border-cyan-500/40 bg-cyan-950/10"
+            />
+            <FlowArrowV />
+            <ArchNode
+              title="Redirect to Original Destination"
+              className="text-center border-emerald-500/40 bg-emerald-950/10"
+            />
+          </div>
+        </div>
+
+        <figcaption className="text-xs font-mono text-slate-500 mt-4 border-t border-slate-800 pt-2">
+          Multi-provider auth: Azure AD (enterprise OIDC) + RPPS-ID FHIR
+          verification against France's national eSante practitioner registry
+        </figcaption>
+      </figure>
+
+      {/* ── DIAGRAM 3: CMS Block Rendering Pipeline ── */}
+      <figure className="border border-slate-700 bg-slate-950 p-4 rounded-sm">
+        <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-4">
+          Fig. 3 — CMS Block Rendering Pipeline
+        </div>
+
+        {/* Stage 1 */}
+        <div className="flex items-stretch gap-1 mb-1">
+          <ArchNode
+            title="Kontent.ai CMS"
+            desc="Published / Draft content"
+            className="flex-1 text-center border-amber-500/40 bg-amber-950/10"
+          />
+          <FlowArrowH />
+          <ArchNode
+            title="Delivery API"
+            desc="or Preview API (draft mode)"
+            className="flex-1 text-center"
+          />
+          <FlowArrowH />
+          <ArchNode
+            title="lib/queries/"
+            desc="42+ typed fetch functions"
+            className="flex-1 text-center border-blue-500/40 bg-blue-950/10"
+          />
+        </div>
+
+        <FlowArrowV />
+
+        {/* Stage 2 */}
+        <div className="flex items-stretch gap-1 mb-1">
+          <ArchNode
+            title="Page Server Component"
+            desc="app/[locale]/[...slug]/page.tsx"
+            className="flex-1 text-center border-blue-500/40 bg-blue-950/10"
+          />
+          <FlowArrowH />
+          <ArchNode
+            title="&lt;ContentZone /&gt;"
+            desc="Block type → Component lookup"
+            className="flex-1 text-center border-cyan-500/40 bg-cyan-950/10"
+          />
+        </div>
+
+        <FlowArrowV />
+
+        {/* Stage 3: Block dispatch */}
+        <div className="border border-slate-700 bg-slate-900/40 rounded-sm p-3 mb-1">
+          <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-2">
+            Block Variant Dispatch — 28 types
+          </div>
+          <div className="grid grid-cols-4 gap-1.5">
+            {[
+              { label: "hero_1a", color: "border-slate-600" },
+              { label: "form_2b", color: "border-slate-600" },
+              { label: "accordion_1a", color: "border-slate-600" },
+              { label: "job-search", color: "border-slate-600" },
+            ].map(({ label, color }) => (
+              <div
+                key={label}
+                className={`border ${color} bg-slate-900 px-2 py-1.5 rounded-sm text-center`}
+              >
+                <span className="text-[9px] font-mono text-slate-300">
+                  {label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <FlowArrowV />
+
+        {/* Stage 4: Primitives */}
+        <div className="border border-emerald-500/30 bg-emerald-950/10 rounded-sm p-3">
+          <div className="text-[9px] font-mono text-emerald-400 uppercase tracking-widest mb-2">
+            UI Primitives — 82+ components
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {[
+              "Button",
+              "ResponsiveImage",
+              "VideoPlayer",
+              "Modal",
+              "RichText",
+              "Dropdown",
+              "Swiper",
+              "AuthButton",
+            ].map((p) => (
+              <span
+                key={p}
+                className="border border-slate-700 bg-slate-900 px-2 py-0.5 rounded-sm text-[9px] font-mono text-slate-400"
+              >
+                {p}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <figcaption className="text-xs font-mono text-slate-500 mt-4 border-t border-slate-800 pt-2">
+          Marketing builds new pages entirely in the CMS — ContentZone resolves
+          block types to React variants at render time with zero code deployments
+        </figcaption>
+      </figure>
+
+      {/* Key Contributions */}
+      <div className="border border-slate-800 bg-slate-900/20 p-5 rounded-sm">
+        <h2 className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest mb-4">
+          Key Contributions
+        </h2>
+        <ul className="space-y-3">
+          {contributions.map((c, i) => (
+            <li
+              key={i}
+              className="flex gap-3 text-sm text-slate-400 leading-relaxed"
+            >
+              <span className="text-cyan-600 font-mono shrink-0 mt-0.5">
+                {String(i + 1).padStart(2, "0")}.
+              </span>
+              <span>{c}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Collapsible engineering decisions */}
+      <details className="group border border-slate-800 rounded-sm">
+        <summary className="px-4 py-3 text-xs font-mono text-slate-500 cursor-pointer hover:text-slate-300 transition-colors list-none flex justify-between items-center">
+          <span>Engineering Decisions &amp; Design Strengths</span>
+          <span className="group-open:rotate-90 transition-transform duration-200">
+            ›
+          </span>
+        </summary>
+        <div className="px-4 pb-5 pt-3 border-t border-slate-800 space-y-4 text-sm text-slate-400 leading-relaxed">
+          {[
+            {
+              title: "Collection-based Multi-tenancy",
+              body: "A single Docker image serves 20+ regional sites by parameterising behavior through KONTENT_COLLECTION and LOCALES environment variables. Redirects and rewrites load from namespaced JSON files at build time — no forks, no per-region deployments, one codebase to maintain.",
+            },
+            {
+              title: "Code-Generated Type Safety",
+              body: "Running @kontent-ai/model-generator against the live CMS API produces 140+ TypeScript interfaces always in sync with the content schema. Renaming a CMS field immediately surfaces as a compile error across 42+ query functions and 28 block components — zero manual type maintenance.",
+            },
+            {
+              title: "FHIR Healthcare Identity Verification",
+              body: "The RPPS-ID auth flow queries France's national eSante FHIR registry, validates the practitioner identifier, cross-references given name and family name against the Practitioner and PractitionerRole resources, then creates a NextAuth session only on full match — a compliance-grade auth path unique to medical platforms.",
+            },
+            {
+              title: "ISR + Custom Image Pipeline",
+              body: "Revalidation windows are tuned per content type: 5 min for careers, 10 min for press releases, 2 hr for search-indexed content. A custom image loader appends WebP conversion, lossless compression, and 6 responsive srcset sizes to every Kontent.ai CDN asset URL at request time.",
+            },
+            {
+              title: "Security-Hardened Docker Builds",
+              body: "Multi-stage builds on Amazon Linux 2023 remove .npmrc (containing the FontAwesome Pro private registry token) after install, copy only standalone build artifacts to the final image, and run as a non-root user (UID 1001) — no source code or dev dependencies in the production container.",
+            },
+          ].map(({ title, body }) => (
+            <div key={title}>
+              <h3 className="text-xs font-mono text-cyan-400 mb-1">{title}</h3>
+              <p>{body}</p>
+            </div>
+          ))}
+        </div>
+      </details>
     </div>
   );
 }
