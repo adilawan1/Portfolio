@@ -143,10 +143,17 @@ export default function PortfolioDashboard() {
                 >
                   ↳ Careers Job Pipeline
                 </button>
+                <button
+                  onClick={() => handleSubTabChange(setWorkSubTab, "cms-middleware")}
+                  className={`px-3 py-1.5 font-mono text-xs border transition-colors rounded-sm ${workSubTab === "cms-middleware" ? "border-emerald-500 text-emerald-400 bg-emerald-900/20" : "border-slate-700 text-slate-500 hover:border-slate-500 hover:text-slate-300"}`}
+                >
+                  ↳ CMS Integration Middleware
+                </button>
               </div>
               <div key={workSubTab} className="animate-fadeIn">
                 {workSubTab === "enterprise" && <EnterpriseHealthcarePlatform />}
                 {workSubTab === "careers-pipeline" && <CareersLambdas />}
+                {workSubTab === "cms-middleware" && <CmsMiddleware />}
               </div>
             </div>
           )}
@@ -2119,6 +2126,445 @@ function CareersLambdas() {
           ].map(({ title, body }) => (
             <div key={title}>
               <div className="text-xs font-mono text-amber-400 mb-1">{title}</div>
+              <p className="text-slate-500 text-xs leading-relaxed">{body}</p>
+            </div>
+          ))}
+        </div>
+      </details>
+    </div>
+  );
+}
+
+// ─── ENTERPRISE CONTENT & SEARCH INTEGRATION MIDDLEWARE ──────────────────────
+
+function CmsMiddleware() {
+  const techStack = [
+    "Node.js",
+    "Express.js",
+    "Kontent AI",
+    "Algolia",
+    "AWS CloudFront",
+    "AWS SSM",
+    "AWS SQS",
+    "SendGrid",
+    "Winston",
+    "Axios",
+    "node-html-parser",
+    "HMAC-SHA256",
+  ];
+
+  const contributions = [
+    "Built HMAC-SHA256 webhook signature validation to authenticate every inbound CMS event before triggering any sync operation — each raw request body is hashed against a shared secret and the result compared to the incoming signature header.",
+    "Designed a dual-mode element query strategy: webhook syncs fetch only the minimal field set needed for an Algolia record (title, slug, description, hero, meta), while full batch re-indexes fetch the complete element graph — cutting Delivery API payload size significantly for high-frequency webhook events.",
+    "Engineered a 5-step HTML sanitization pipeline that transforms raw investor-relations HTML into CMS-ready content: removes external media assets, converts underlined text nodes into semantic h4 headers, strips inline style attributes, cleans wrapper divs, and appends a standardized footer marker.",
+    "Implemented a delta-checkpoint pattern using AWS SSM Parameter Store — the pipeline reads the last-synced record ID on startup and processes only new entries, then writes the new checkpoint on completion, making every run idempotent and safe to re-trigger.",
+    "Architected multi-locale Algolia index management with per-language page indices (e.g. default-language-pages, jp-language-pages) and selective press-release sub-indices for locales that require them — all driven by a single sync path with locale-aware routing.",
+    "Documented and designed a planned serverless migration from the persistent Express server to 5 Lambda functions behind API Gateway + SQS — decoupling webhook reception from processing, enabling per-function independent scaling, and eliminating the single point of failure.",
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <div className="inline-flex items-center gap-2 px-2 py-1 text-[9px] font-mono bg-slate-900 border border-slate-700 text-slate-500 rounded-sm mb-3 select-none">
+          <span className="w-1.5 h-1.5 rounded-full bg-slate-600 inline-block" />
+          NDA · Fortune 500 Global Company · Proprietary identifiers omitted
+        </div>
+        <h1 className="text-3xl font-serif text-slate-100 mb-3">
+          Enterprise Content &amp; Search Integration Middleware
+        </h1>
+        <p className="text-sm text-slate-400 leading-relaxed border-l-2 border-emerald-500 pl-4">
+          Node.js/Express integration backbone bridging a headless CMS with
+          Algolia Search, AWS CloudFront CDN, and an investor-relations API —
+          propagating content changes in real time via webhooks, running an
+          autonomous press-release ingestion pipeline, and designed for a
+          planned migration to a fully serverless AWS Lambda architecture.
+        </p>
+      </div>
+
+      {/* Tech badges */}
+      <div className="flex flex-wrap gap-2">
+        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest self-center mr-1">
+          Stack:
+        </span>
+        {techStack.map((t) => (
+          <span
+            key={t}
+            className="px-2 py-0.5 bg-emerald-950/30 border border-emerald-800/40 text-emerald-300 text-[10px] font-mono rounded-sm"
+          >
+            {t}
+          </span>
+        ))}
+      </div>
+
+      {/* Metric cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {[
+          { label: "Content Pipelines", value: "3", color: "text-emerald-400", border: "border-emerald-500/40" },
+          { label: "HTML Transform Steps", value: "5", color: "text-amber-400", border: "border-amber-500/40" },
+          { label: "Algolia Index Types", value: "3", color: "text-purple-400", border: "border-purple-500/40" },
+          { label: "Planned Lambda Fns", value: "5", color: "text-blue-400", border: "border-blue-500/40" },
+        ].map((s) => (
+          <div
+            key={s.label}
+            className={`border ${s.border} bg-slate-900/40 p-3 rounded-sm text-center`}
+          >
+            <div className={`text-2xl font-mono font-bold ${s.color}`}>{s.value}</div>
+            <div className="text-[10px] font-mono text-slate-500 mt-1 leading-tight">{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── DIAGRAM 1: System Architecture ── */}
+      <figure className="border border-slate-700 bg-slate-950 p-4 rounded-sm">
+        <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-4">
+          Fig. 1 — System Architecture
+        </div>
+
+        {/* Layer 1: External sources */}
+        <div className="border border-slate-600/40 bg-slate-900/30 rounded-sm p-3 mb-1">
+          <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-2">
+            External Content Sources
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <ArchNode
+              title="Headless CMS"
+              desc="Publishes webhooks on every content publish / unpublish event"
+              className="border-emerald-500/40 bg-emerald-950/10"
+            />
+            <ArchNode
+              title="Investor Relations Portal API"
+              desc="REST API — press release feed (XML / JSON)"
+              className="border-slate-600"
+            />
+          </div>
+        </div>
+
+        <FlowArrowV />
+
+        {/* Layer 2: Middleware */}
+        <div className="border border-emerald-500/30 bg-emerald-950/10 rounded-sm p-3 mb-1">
+          <div className="text-[9px] font-mono text-emerald-400 uppercase tracking-widest mb-2">
+            Middleware Server — Node.js / Express
+          </div>
+          <div className="grid grid-cols-3 gap-2 mb-2">
+            <ArchNode title="POST /search/page/sync" desc="Webhook receiver · HMAC-SHA256 guard" />
+            <ArchNode title="POST /search/careers/sync" desc="Careers page webhook receiver" />
+            <ArchNode title="Press Release Pipeline" desc="Scheduled / manual trigger" />
+          </div>
+          <div className="grid grid-cols-4 gap-2">
+            <ArchNode title="search/" desc="index · transform · sync" className="border-emerald-500/30 bg-emerald-950/10" />
+            <ArchNode title="press-releases/" desc="ingest · sanitize · publish" className="border-emerald-500/30 bg-emerald-950/10" />
+            <ArchNode title="careers-search/" desc="careers Algolia sync" className="border-emerald-500/30 bg-emerald-950/10" />
+            <ArchNode title="aws-client/" desc="CloudFront · SSM" className="border-emerald-500/30 bg-emerald-950/10" />
+          </div>
+        </div>
+
+        <FlowArrowV />
+
+        {/* Layer 3: Target services */}
+        <div className="border border-purple-500/30 bg-purple-950/10 rounded-sm p-3">
+          <div className="text-[9px] font-mono text-purple-400 uppercase tracking-widest mb-2">
+            Target Services
+          </div>
+          <div className="grid grid-cols-4 gap-2">
+            <ArchNode title="Algolia Search" desc="3 index types · per-locale naming · faceted" className="border-purple-500/40 bg-purple-950/10" />
+            <ArchNode title="AWS CloudFront" desc="Cache invalidation after content sync" className="border-blue-500/40 bg-blue-950/10" />
+            <ArchNode title="AWS SSM" desc="Delta checkpoint storage · press release ID" className="border-blue-500/40 bg-blue-950/10" />
+            <ArchNode title="SendGrid" desc="Email notifications on sync events" className="border-slate-600" />
+          </div>
+        </div>
+
+        <div className="mt-3 flex items-center gap-1.5">
+          <div className="text-[9px] font-mono text-emerald-600 border border-emerald-600/30 rounded-sm px-1.5 py-0.5 bg-emerald-950/20">
+            ↺ press-releases/ also writes back to CMS via Management API
+          </div>
+        </div>
+
+        <figcaption className="text-xs font-mono text-slate-500 mt-3 border-t border-slate-800 pt-2">
+          Three-tier integration: external content sources → Express middleware
+          with BLL modules → Algolia, CDN, and notification services
+        </figcaption>
+      </figure>
+
+      {/* ── DIAGRAM 2: Webhook Search Sync ── */}
+      <figure className="border border-slate-700 bg-slate-950 p-4 rounded-sm">
+        <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-4">
+          Fig. 2 — Webhook-to-Search Sync Flow
+        </div>
+
+        {/* Entry chain */}
+        <ArchNode
+          title="CMS Editor publishes / unpublishes a page"
+          className="text-center border-emerald-500/40 bg-emerald-950/10"
+        />
+        <FlowArrowV />
+        <ArchNode
+          title="POST /api/search/page/sync"
+          desc="Raw buffer body · Content-Length ≤ 100 MB guard"
+          className="text-center"
+        />
+        <FlowArrowV />
+        <ArchNode
+          title="HMAC-SHA256 Signature Validation"
+          desc="Compute HMAC(secret, rawBody) → compare to X-Signature header"
+          className="text-center border-amber-500/40 bg-amber-950/10"
+        />
+        <FlowArrowV />
+        <ArchNode
+          title="Parse Webhook Payload"
+          desc="Extract: action · language · codename · content type"
+          className="text-center"
+        />
+        <FlowArrowV />
+
+        {/* Branch: publish vs unpublish */}
+        <div className="border border-slate-600 bg-slate-900/60 rounded-sm py-2 px-4 text-center mb-1">
+          <div className="text-[10px] font-mono font-semibold text-slate-300">action = ?</div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 mt-1">
+          {/* publish branch */}
+          <div className="space-y-1 border-r border-slate-800 pr-3">
+            <div className="text-[9px] font-mono text-emerald-500 uppercase tracking-widest text-center">
+              ✓ publish
+            </div>
+            <FlowArrowV />
+            <ArchNode
+              title="Delivery API: GET item"
+              desc="Fetch by codename + language · element query (single mode)"
+            />
+            <FlowArrowV />
+            <ArchNode
+              title="isIndexable() check"
+              desc="Read robots meta tag — noindex → skip"
+              className="border-amber-500/40 bg-amber-950/10"
+            />
+            <FlowArrowV />
+            <ArchNode
+              title="Transform → Algolia Record"
+              desc="objectID · title · description · url_slug · jumplinks"
+            />
+            <FlowArrowV />
+            <ArchNode
+              title="saveObject()"
+              desc="Upsert to {language}-language-pages index"
+              className="border-emerald-500/40 bg-emerald-950/10"
+            />
+          </div>
+
+          {/* unpublish branch */}
+          <div className="space-y-1">
+            <div className="text-[9px] font-mono text-rose-500 uppercase tracking-widest text-center">
+              ✗ unpublish
+            </div>
+            <FlowArrowV />
+            <ArchNode
+              title="deleteObject(objectID)"
+              desc="Remove record from Algolia index by codename"
+              className="border-rose-500/40 bg-rose-950/10 text-center"
+            />
+          </div>
+        </div>
+
+        <figcaption className="text-xs font-mono text-slate-500 mt-4 border-t border-slate-800 pt-2">
+          Dual-mode query strategy: webhook syncs fetch only the minimal
+          field set; batch re-indexes fetch the full element graph
+        </figcaption>
+      </figure>
+
+      {/* ── DIAGRAM 3: Press Release Pipeline ── */}
+      <figure className="border border-slate-700 bg-slate-950 p-4 rounded-sm">
+        <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-4">
+          Fig. 3 — Press Release Ingestion Pipeline
+        </div>
+
+        <ArchNode
+          title="Pipeline triggered (scheduled / manual)"
+          className="text-center border-emerald-500/40 bg-emerald-950/10"
+        />
+        <FlowArrowV />
+
+        {/* Steps 1 & 2 */}
+        <div className="grid grid-cols-2 gap-2 mb-1">
+          <div className="border border-slate-700 bg-slate-900/50 rounded-sm p-2 space-y-1">
+            <div className="text-[9px] font-mono text-emerald-500 uppercase tracking-widest">
+              Step 1 — Checkpoint
+            </div>
+            <ArchNode
+              title="Read last-synced ID from AWS SSM"
+              desc="Delta anchor — only new entries are processed"
+            />
+            <FlowArrowV />
+            <ArchNode
+              title="Checkpoint value"
+              desc="Last press release ID written on previous run"
+              className="border-blue-500/40 bg-blue-950/10"
+            />
+          </div>
+          <div className="border border-slate-700 bg-slate-900/50 rounded-sm p-2 space-y-1">
+            <div className="text-[9px] font-mono text-emerald-500 uppercase tracking-widest">
+              Step 2 — Fetch
+            </div>
+            <ArchNode
+              title="GET Investor Relations Portal API"
+              desc="Axios · press release list endpoint"
+            />
+            <FlowArrowV />
+            <ArchNode
+              title="Filter: date threshold + dedup"
+              desc="Exclude pre-cutoff items + already-synced IDs"
+              className="border-amber-500/40 bg-amber-950/10"
+            />
+          </div>
+        </div>
+
+        {/* Change gate */}
+        <div className="border border-slate-600 bg-slate-900/60 rounded-sm py-2 px-4 text-center my-1">
+          <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-0.5">
+            New releases found?
+          </div>
+          <div className="text-[10px] font-mono font-semibold text-slate-300">
+            Compare incoming IDs against existing CMS items
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 mb-1">
+          <div className="space-y-1 border-r border-slate-800 pr-3">
+            <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest text-center">
+              ✗ None
+            </div>
+            <FlowArrowV />
+            <ArchNode
+              title="EXIT — no-op"
+              desc="Nothing to sync · checkpoint unchanged"
+              className="text-center border-slate-600 bg-slate-900"
+            />
+          </div>
+          <div className="space-y-1">
+            <div className="text-[9px] font-mono text-emerald-500 uppercase tracking-widest text-center">
+              ✓ New items
+            </div>
+            <FlowArrowV />
+            <div className="text-[9px] font-mono text-emerald-600 text-center">
+              For each new press release:
+            </div>
+          </div>
+        </div>
+
+        <FlowArrowV />
+
+        {/* HTML sanitization row */}
+        <div className="border border-amber-500/30 bg-amber-950/10 rounded-sm p-3 mb-1">
+          <div className="text-[9px] font-mono text-amber-400 uppercase tracking-widest mb-2">
+            Step 3 — HTML Sanitization (5 transforms, node-html-parser)
+          </div>
+          <div className="grid grid-cols-5 gap-1">
+            {[
+              { step: "①", label: "Remove external media logos" },
+              { step: "②", label: "Underlined text → <h4>" },
+              { step: "③", label: "Strip inline style attrs" },
+              { step: "④", label: "Clean image wrapper divs" },
+              { step: "⑤", label: "Append # # # footer" },
+            ].map(({ step, label }) => (
+              <div
+                key={step}
+                className="border border-amber-800/40 bg-amber-950/20 px-1.5 py-1.5 rounded-sm text-center"
+              >
+                <div className="text-[10px] font-mono text-amber-400">{step}</div>
+                <div className="text-[9px] font-mono text-slate-400 mt-0.5 leading-snug">{label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <FlowArrowV />
+
+        {/* CMS Management API steps */}
+        <div className="border border-slate-700 bg-slate-900/50 rounded-sm p-3 mb-1">
+          <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-2">
+            Step 4 — CMS Management API (sequential)
+          </div>
+          <div className="flex items-stretch gap-1">
+            <ArchNode title="POST /assets" desc="Upload sanitized body as binary asset" className="flex-1" />
+            <FlowArrowH />
+            <ArchNode title="POST /items" desc="Create press_release content item" className="flex-1" />
+            <FlowArrowH />
+            <ArchNode title="PUT /variants" desc="Set all element values + asset ref" className="flex-1" />
+            <FlowArrowH />
+            <ArchNode title="PUT /publish" desc="Transition Draft → Published" className="flex-1 border-emerald-500/40 bg-emerald-950/10" />
+          </div>
+        </div>
+
+        <FlowArrowV />
+
+        <div className="grid grid-cols-2 gap-2">
+          <ArchNode
+            title="Step 5 — Save checkpoint to AWS SSM"
+            desc="Write latest press release ID · next run reads this as delta anchor"
+            className="border-blue-500/40 bg-blue-950/10"
+          />
+          <ArchNode
+            title="Step 6 — Republish landing page"
+            desc="Re-trigger CMS landing page publish to reflect new listing"
+            className="border-emerald-500/40 bg-emerald-950/10"
+          />
+        </div>
+
+        <figcaption className="text-xs font-mono text-slate-500 mt-4 border-t border-slate-800 pt-2">
+          Delta-checkpoint pattern ensures idempotency — re-triggering the
+          pipeline never re-processes already-synced releases
+        </figcaption>
+      </figure>
+
+      {/* Key Contributions */}
+      <div className="border border-slate-800 bg-slate-900/20 p-5 rounded-sm">
+        <h2 className="text-[10px] font-mono text-emerald-400 uppercase tracking-widest mb-4">
+          Key Contributions
+        </h2>
+        <ul className="space-y-3">
+          {contributions.map((c, i) => (
+            <li key={i} className="flex gap-3 text-sm text-slate-400 leading-relaxed">
+              <span className="text-emerald-600 font-mono shrink-0 mt-0.5">
+                {String(i + 1).padStart(2, "0")}.
+              </span>
+              <span>{c}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Collapsible engineering decisions */}
+      <details className="group border border-slate-800 rounded-sm">
+        <summary className="px-4 py-3 text-xs font-mono text-slate-500 cursor-pointer hover:text-slate-300 transition-colors list-none flex justify-between items-center">
+          <span>Engineering Decisions &amp; Design Strengths</span>
+          <span className="group-open:rotate-90 transition-transform duration-200">›</span>
+        </summary>
+        <div className="px-4 pb-5 pt-3 border-t border-slate-800 space-y-4 text-sm text-slate-400 leading-relaxed">
+          {[
+            {
+              title: "Clean BLL Module Layering",
+              body: "The search module is split into three clear concerns: index.js (orchestration — decides which index and coordinates the flow), transform.js (data shape — converts CMS delivery responses into flat Algolia records), and sync.js (Algolia operations — thin wrapper over the client). This separation means the Algolia client can be swapped without touching the transformation logic, and the CMS structure can change without touching the index operations.",
+            },
+            {
+              title: "Delta Checkpoint via AWS SSM",
+              body: "The press release pipeline reads the last-synced ID from SSM at startup and writes the new ID only after all items for that run have been successfully committed to the CMS. This makes every run idempotent — a crash mid-run leaves the checkpoint at the previous successful ID, so the next run re-processes only the failed items rather than skipping them or re-processing everything.",
+            },
+            {
+              title: "Dual-Mode Element Query Strategy",
+              body: "Kentico Delivery API responses include every content element by default. The _GetElementsParameter(callType) function selects a minimal field set for webhook syncs (title, slug, description, hero, meta only) and the full element graph for batch re-indexes. This reduces API payload size significantly for high-frequency webhook events while still giving the batch job everything it needs.",
+            },
+            {
+              title: "HMAC Signature Validation Design",
+              body: "Webhook signature validation is implemented via the @kontent-ai/webhook-helper library (HMAC-SHA256, raw body hashing) and is designed to be enabled by toggling a single guard. A payload size middleware (100 MB limit) is active regardless. This pattern allows the security layer to be activated without any routing changes — important for staged rollouts or environments where the webhook secret is not yet provisioned.",
+            },
+            {
+              title: "Planned Serverless Migration",
+              body: "The current persistent Express server is a single point of failure with manual scaling. The designed serverless successor uses 5 Lambda functions (webhook-receiver, search-sync, press-release-ingest, cloudfront-invalidate, careers-sync) behind API Gateway with SQS decoupling for async webhook processing. This eliminates the always-on server cost, enables per-function independent scaling, and turns webhook reception into a non-blocking enqueue operation.",
+            },
+          ].map(({ title, body }) => (
+            <div key={title}>
+              <div className="text-xs font-mono text-emerald-400 mb-1">{title}</div>
               <p className="text-slate-500 text-xs leading-relaxed">{body}</p>
             </div>
           ))}
