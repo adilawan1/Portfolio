@@ -406,7 +406,7 @@ function NasaTelemetryProject() {
       {/* Abstract (full academic text) */}
       <details className="group border border-slate-800 rounded-sm">
         <summary className="px-4 py-3 text-xs font-mono text-slate-500 cursor-pointer hover:text-slate-300 transition-colors list-none flex justify-between items-center">
-          <span>Full Abstract (IEEE Manuscript)</span>
+          <span>Full Abstract (Course Project Paper)</span>
           <span className="group-open:rotate-90 transition-transform duration-200">
             ›
           </span>
@@ -414,17 +414,17 @@ function NasaTelemetryProject() {
         <p className="px-4 pb-4 pt-2 text-sm leading-relaxed text-slate-400 border-t border-slate-800">
           Industrial and spacecraft telemetry streams generate vast volumes of
           multivariate sensor data, but labelled anomalies are rare or absent.
-          We study purely unsupervised reconstruction-based detection on the
-          NASA SMAP/MSL telemetry benchmark and propose a hybrid temporal
+          This project studies purely unsupervised reconstruction-based detection
+          on the NASA SMAP/MSL telemetry benchmark and proposes a hybrid temporal
           autoencoder that runs an LSTM and a Temporal Convolutional Network
           (TCN) encoder in parallel, fuses their per-timestep representations
           with a learned attention gate, and scores anomalies by combining
           input-space reconstruction error with a latent-space Mahalanobis
-          distance (dual scoring). We further introduce an anomaly-masked
-          dynamic threshold that prevents sustained anomalies from inflating the
-          running baseline. Across six representative SMAP and MSL channels, the
-          dual score yields perfect recall on every model evaluated and lifts
-          the seq-to-seq LSTM autoencoder to a mean Point-Adjusted F1 of 0.953,
+          distance (dual scoring). An anomaly-masked dynamic threshold is
+          introduced to prevent sustained anomalies from inflating the running
+          baseline. Across six representative SMAP and MSL channels, the dual
+          score yields perfect recall on every model evaluated and lifts the
+          seq-to-seq LSTM autoencoder to a mean Point-Adjusted F1 of 0.953,
           substantially above the CNN baseline (0.775). The hybrid model reaches
           0.846 and is the most consistent recall-1.0 detector, showing that
           fusing reconstruction error with latent distance catches anomalies
@@ -436,7 +436,7 @@ function NasaTelemetryProject() {
       <div className="flex flex-wrap gap-4 p-4 border border-slate-800 bg-slate-950/60 rounded-sm items-center justify-between">
         <div className="text-xs font-mono text-slate-400">
           <span className="text-slate-300">NASA_Telemetry_Report.pdf</span>
-          <span className="text-slate-600 ml-2">2.4 MB · IEEE Manuscript</span>
+          <span className="text-slate-600 ml-2">2.4 MB · Course Project Paper</span>
         </div>
         <div className="flex gap-2">
           <a
@@ -581,16 +581,16 @@ function ROS2Project() {
 
       <details className="group border border-slate-800 rounded-sm">
         <summary className="px-4 py-3 text-xs font-mono text-slate-500 cursor-pointer hover:text-slate-300 transition-colors list-none flex justify-between items-center">
-          <span>Full Abstract (IEEE Manuscript)</span>
+          <span>Full Abstract (Course Project Paper)</span>
           <span className="group-open:rotate-90 transition-transform duration-200">
             ›
           </span>
         </summary>
         <p className="px-4 pb-4 pt-2 text-sm leading-relaxed text-slate-400 border-t border-slate-800">
-          This paper presents a ROS 2–based autonomous navigation system for the
-          Benchmark Autonomous Robot Navigation (BARN) environment, combining
+          This project implements a ROS 2–based autonomous navigation system for
+          the Benchmark Autonomous Robot Navigation (BARN) environment, combining
           vision and LiDAR sensing for robust navigation in cluttered spaces.
-          Our vision-based masking pipeline segments obstacles and extracts
+          The vision-based masking pipeline segments obstacles and extracts
           traversable floor regions from RGB images, using a centroid-based
           proportional controller to guide the robot. Simultaneously, LiDAR data
           is processed via a Vector Field Histogram (VFH)–inspired approach.
@@ -611,7 +611,7 @@ function ROS2Project() {
       <div className="flex flex-wrap gap-4 p-4 border border-slate-800 bg-slate-950/60 rounded-sm items-center justify-between">
         <div className="text-xs font-mono text-slate-400">
           <span className="text-slate-300">ros2_BARN_Report.pdf</span>
-          <span className="text-slate-600 ml-2">2.4 MB · IEEE Manuscript</span>
+          <span className="text-slate-600 ml-2">2.4 MB · Course Project Paper</span>
         </div>
         <div className="flex gap-2">
           <a
@@ -994,14 +994,13 @@ function ProfileResume() {
           Ahmed Adil
         </h1>
         <div className="text-sm font-mono text-purple-400 border-l-2 border-purple-500 pl-4 py-1 mb-4">
-          <TypewriterText text="Senior Software Engineer & AI Researcher" />
+          <TypewriterText text="Senior Software Engineer & MS AI Student" />
         </div>
         <p className="text-slate-400 leading-relaxed max-w-2xl">
-          Four years shipping enterprise software at scale, now applying that
-          production mindset to AI research at LUMS. I bridge rigorous ML
-          research with systems that run in production — from multi-tenant SaaS
-          platforms handling 20+ clients to autonomous navigation pipelines that
-          cleared 82% of benchmark worlds.
+          Four years shipping enterprise software at scale, now pursuing an MS
+          in AI at LUMS. I bridge the gap between production engineering and
+          applied AI — from multi-tenant SaaS platforms handling 20+ clients to
+          autonomous navigation pipelines that cleared 82% of benchmark worlds.
         </p>
 
         {/* ── Availability badge ── */}
@@ -1070,7 +1069,7 @@ function ProfileResume() {
           },
           {
             value: "2",
-            label: "Research Papers",
+            label: "Academic Papers",
             color: "text-slate-300",
             border: "border-slate-600/30",
           },
@@ -1105,7 +1104,7 @@ function ProfileResume() {
               </div>
             </div>
             <div className="pt-3 border-t border-slate-800 text-xs text-slate-500 leading-relaxed">
-              Research focus: unsupervised anomaly detection in time-series,
+              Academic interests: unsupervised anomaly detection in time-series,
               autonomous robot navigation, and large language model
               applications.
             </div>
@@ -1239,11 +1238,11 @@ function ProfileResume() {
               body: "RAG pipelines, LLM-powered product features, custom embedding systems, and intelligent agents integrated into existing software.",
             },
             {
-              title: "Research & Prototyping",
+              title: "ML Prototyping",
               border: "border-emerald-500/30 hover:border-emerald-500/60",
               accent: "text-emerald-400",
               bg: "bg-emerald-950/10",
-              body: "Applied ML research, rapid prototyping of novel architectures, and paper-ready experiments in deep learning and autonomous systems.",
+              body: "Rapid prototyping of ML architectures and experiments in deep learning and autonomous systems — keen to move this into research.",
             },
           ].map(({ title, border, accent, bg, body }) => (
             <div
