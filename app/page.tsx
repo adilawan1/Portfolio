@@ -137,9 +137,16 @@ export default function PortfolioDashboard() {
                 >
                   ↳ Enterprise Healthcare Platform
                 </button>
+                <button
+                  onClick={() => handleSubTabChange(setWorkSubTab, "careers-pipeline")}
+                  className={`px-3 py-1.5 font-mono text-xs border transition-colors rounded-sm ${workSubTab === "careers-pipeline" ? "border-amber-500 text-amber-400 bg-amber-900/20" : "border-slate-700 text-slate-500 hover:border-slate-500 hover:text-slate-300"}`}
+                >
+                  ↳ Careers Job Pipeline
+                </button>
               </div>
               <div key={workSubTab} className="animate-fadeIn">
                 {workSubTab === "enterprise" && <EnterpriseHealthcarePlatform />}
+                {workSubTab === "careers-pipeline" && <CareersLambdas />}
               </div>
             </div>
           )}
@@ -1727,6 +1734,392 @@ function EnterpriseHealthcarePlatform() {
             <div key={title}>
               <h3 className="text-xs font-mono text-cyan-400 mb-1">{title}</h3>
               <p>{body}</p>
+            </div>
+          ))}
+        </div>
+      </details>
+    </div>
+  );
+}
+
+// ─── CAREERS JOB PIPELINE & REST API ─────────────────────────────────────────
+
+function CareersLambdas() {
+  const techStack = [
+    "Node.js 20",
+    "AWS Lambda",
+    "DynamoDB",
+    "API Gateway",
+    "EventBridge",
+    "Serverless Framework v3",
+    "Algolia",
+    "Workday XML API",
+    "OAuth 2.0",
+    "xml-js",
+    "CloudFront",
+  ];
+
+  const contributions = [
+    "Built a fully serverless, event-driven job-sync pipeline that eliminates a traditional HR backend — Workday XML feeds are automatically ingested, transformed, and committed to DynamoDB + Algolia every two hours without any persistent infrastructure.",
+    "Designed a change-detection gate before all write operations: the pipeline scans existing DynamoDB IDs, compares them against the incoming Workday feed by count and set membership, and skips every write when data is unchanged — preventing unnecessary costs and the brief Algolia stale-result window during re-indexing.",
+    "Implemented OAuth 2.0 refresh-token flow against Workday's token endpoint on every invocation, handling base64 client credentials and bearer token injection into the downstream XML report API call.",
+    "Engineered a dual-format transformation in a single loop: mapJobPart() accepts a purpose flag ('DB' or 'search') and produces DynamoDB typed JSON or plain Algolia-ready JSON without a second pass or intermediate copies.",
+    "Set reserved concurrency to 1 on the 15-minute import function to prevent EventBridge's next scheduled firing from overlapping a slow run — avoiding duplicate DynamoDB deletes and conflicting Algolia writes.",
+    "Deployed the fetch endpoint as an EDGE-type API Gateway backed by CloudFront, distributing job-record reads globally without requiring a separate CDN setup.",
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <div className="inline-flex items-center gap-2 px-2 py-1 text-[9px] font-mono bg-slate-900 border border-slate-700 text-slate-500 rounded-sm mb-3 select-none">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block" />
+          AWS · Serverless · Production Pipeline
+        </div>
+        <h1 className="text-3xl font-serif text-slate-100 mb-3">
+          Careers Job Pipeline &amp; REST API
+        </h1>
+        <p className="text-sm text-slate-400 leading-relaxed border-l-2 border-amber-500 pl-4">
+          Fully serverless data pipeline and REST API on AWS Lambda that
+          automatically syncs job listings from a Workday HR system into
+          DynamoDB and Algolia Search on a two-hour cron schedule, and exposes
+          individual job records through an edge-cached, API-key-secured
+          endpoint.
+        </p>
+      </div>
+
+      {/* Tech badges */}
+      <div className="flex flex-wrap gap-2">
+        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest self-center mr-1">
+          Stack:
+        </span>
+        {techStack.map((t) => (
+          <span
+            key={t}
+            className="px-2 py-0.5 bg-amber-950/30 border border-amber-800/40 text-amber-300 text-[10px] font-mono rounded-sm"
+          >
+            {t}
+          </span>
+        ))}
+      </div>
+
+      {/* Metric cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {[
+          { label: "Lambda Functions", value: "2", color: "text-amber-400", border: "border-amber-500/40" },
+          { label: "Sync Interval", value: "2 hr", color: "text-blue-400", border: "border-blue-500/40" },
+          { label: "Algolia Facets", value: "5", color: "text-purple-400", border: "border-purple-500/40" },
+          { label: "DynamoDB Batch Size", value: "25", color: "text-emerald-400", border: "border-emerald-500/40" },
+        ].map((s) => (
+          <div
+            key={s.label}
+            className={`border ${s.border} bg-slate-900/40 p-3 rounded-sm text-center`}
+          >
+            <div className={`text-2xl font-mono font-bold ${s.color}`}>{s.value}</div>
+            <div className="text-[10px] font-mono text-slate-500 mt-1 leading-tight">{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── DIAGRAM 1: Cloud Architecture ── */}
+      <figure className="border border-slate-700 bg-slate-950 p-4 rounded-sm">
+        <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-4">
+          Fig. 1 — AWS Cloud Architecture
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Write path */}
+          <div className="border border-amber-500/30 bg-amber-950/10 rounded-sm p-3 space-y-1">
+            <div className="text-[9px] font-mono text-amber-400 uppercase tracking-widest mb-2">
+              Write Path — Scheduled
+            </div>
+            <ArchNode
+              title="EventBridge Cron"
+              desc="cron(12 */2 ? * * *) · fires every 2 hours"
+              className="border-amber-500/40 bg-amber-950/10 text-center"
+            />
+            <FlowArrowV />
+            <ArchNode
+              title="Lambda: importJob"
+              desc="Node 20 · 2048 MB · 900 s · Concurrency: 1"
+              className="border-amber-500/40"
+            />
+            <FlowArrowV />
+            <ArchNode
+              title="Workday OAuth2 + XML Report API"
+              desc="Refresh token → access token → XML feed fetch"
+            />
+            <FlowArrowV />
+            <ArchNode
+              title="Transform + Change Detection"
+              desc="mapJobPart() dual-format · count + set comparison"
+            />
+            <FlowArrowV />
+            <div className="grid grid-cols-2 gap-1">
+              <ArchNode
+                title="Algolia Index"
+                desc="clearObjects + saveObjects · 5 facets"
+                className="border-purple-500/40 bg-purple-950/10"
+              />
+              <ArchNode
+                title="DynamoDB"
+                desc="delete-all → batchWrite 25/chunk"
+                className="border-amber-500/40 bg-amber-950/10"
+              />
+            </div>
+          </div>
+
+          {/* Read path */}
+          <div className="border border-blue-500/30 bg-blue-950/10 rounded-sm p-3 space-y-1">
+            <div className="text-[9px] font-mono text-blue-400 uppercase tracking-widest mb-2">
+              Read Path — On-Demand API
+            </div>
+            <ArchNode
+              title="Portfolio Website (client)"
+              desc="GET /api/fetchjobdetails/{id}"
+              className="border-blue-500/40 bg-blue-950/10 text-center"
+            />
+            <FlowArrowV />
+            <ArchNode
+              title="API Gateway — REST, Edge"
+              desc="x-api-key header auth · CloudFront global CDN"
+              className="border-blue-500/40"
+            />
+            <FlowArrowV />
+            <ArchNode
+              title="Lambda: fetchJob"
+              desc="Node 20 · 2048 MB · 29 s · Concurrency: 100"
+              className="border-blue-500/40"
+            />
+            <FlowArrowV />
+            <ArchNode
+              title="DynamoDB getItem"
+              desc="PK: id (requisition ID) · point lookup"
+              className="border-emerald-500/40 bg-emerald-950/10"
+            />
+            <FlowArrowV />
+            <div className="grid grid-cols-2 gap-1">
+              <ArchNode
+                title="HTTP 200"
+                desc="Job record JSON"
+                className="border-emerald-500/40 bg-emerald-950/10 text-center"
+              />
+              <ArchNode
+                title="HTTP 404"
+                desc="Item not found"
+                className="border-rose-500/40 bg-rose-950/10 text-center"
+              />
+            </div>
+          </div>
+        </div>
+
+        <figcaption className="text-xs font-mono text-slate-500 mt-4 border-t border-slate-800 pt-2">
+          Two independent Lambda functions share one DynamoDB table — importJob
+          writes on a cron schedule; fetchJob reads on demand through an
+          edge-cached API Gateway
+        </figcaption>
+      </figure>
+
+      {/* ── DIAGRAM 2: importJob Pipeline (6-step sequence) ── */}
+      <figure className="border border-slate-700 bg-slate-950 p-4 rounded-sm">
+        <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-4">
+          Fig. 2 — importJob Data Pipeline (6-step sequence)
+        </div>
+
+        <ArchNode
+          title="EventBridge fires cron trigger"
+          className="text-center border-amber-500/40 bg-amber-950/10"
+        />
+        <FlowArrowV />
+
+        {/* Steps 1 & 2 */}
+        <div className="grid grid-cols-2 gap-2 mb-1">
+          <div className="border border-slate-700 bg-slate-900/50 rounded-sm p-2 space-y-1">
+            <div className="text-[9px] font-mono text-amber-500 uppercase tracking-widest">
+              Step 1 — OAuth2
+            </div>
+            <ArchNode
+              title="POST token endpoint"
+              desc="Authorization: Basic base64(id:secret)"
+            />
+            <FlowArrowV />
+            <ArchNode
+              title="{ access_token }"
+              desc="Bearer token for report API"
+              className="border-emerald-500/40 bg-emerald-950/10"
+            />
+          </div>
+          <div className="border border-slate-700 bg-slate-900/50 rounded-sm p-2 space-y-1">
+            <div className="text-[9px] font-mono text-amber-500 uppercase tracking-widest">
+              Step 2 — Fetch
+            </div>
+            <ArchNode
+              title="GET Workday XML Report"
+              desc="Authorization: Bearer {access_token}"
+            />
+            <FlowArrowV />
+            <ArchNode
+              title="XML Payload"
+              desc="wd:Report_Data · one wd:Report_Entry per job"
+              className="border-amber-500/40 bg-amber-950/10"
+            />
+          </div>
+        </div>
+
+        <FlowArrowV />
+
+        {/* Steps 3 & 4 */}
+        <div className="grid grid-cols-2 gap-2 mb-1">
+          <div className="border border-slate-700 bg-slate-900/50 rounded-sm p-2 space-y-1">
+            <div className="text-[9px] font-mono text-amber-500 uppercase tracking-widest">
+              Step 3 — Parse
+            </div>
+            <ArchNode
+              title="DOMParser + xml-js"
+              desc="Extract each wd:Report_Entry node"
+            />
+            <FlowArrowV />
+            <ArchNode
+              title="Raw JSON array"
+              desc="One object per job posting"
+              className="border-slate-600 bg-slate-900"
+            />
+          </div>
+          <div className="border border-slate-700 bg-slate-900/50 rounded-sm p-2 space-y-1">
+            <div className="text-[9px] font-mono text-amber-500 uppercase tracking-widest">
+              Step 4 — Transform
+            </div>
+            <ArchNode
+              title="mapJobPart(job, purpose)"
+              desc="Single loop · dual-format output"
+            />
+            <FlowArrowV />
+            <ArchNode
+              title="dbJobs[ ]"
+              desc="DynamoDB typed JSON (S / N wrappers)"
+              className="border-amber-500/40 bg-amber-950/10"
+            />
+            <ArchNode
+              title="searchJobs[ ]"
+              desc="Plain JSON · objectID + Remote + startDate"
+              className="border-purple-500/40 bg-purple-950/10"
+            />
+          </div>
+        </div>
+
+        <FlowArrowV />
+
+        {/* Step 5: Change detection */}
+        <div className="border border-slate-600 bg-slate-900/60 rounded-sm py-2 px-4 text-center mb-1">
+          <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-0.5">
+            Step 5 — Change Detection
+          </div>
+          <div className="text-[10px] font-mono font-semibold text-slate-300">
+            Scan DynamoDB IDs → compare count + set membership
+          </div>
+        </div>
+
+        {/* Branch: no-change vs data-changed */}
+        <div className="grid grid-cols-2 gap-3 mt-1">
+          <div className="space-y-1 border-r border-slate-800 pr-3">
+            <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest text-center">
+              ✗ No change
+            </div>
+            <FlowArrowV />
+            <ArchNode
+              title="EXIT — no-op"
+              desc="All writes skipped · zero DynamoDB + Algolia cost"
+              className="text-center border-slate-600 bg-slate-900"
+            />
+          </div>
+          <div className="space-y-1">
+            <div className="text-[9px] font-mono text-amber-500 uppercase tracking-widest text-center">
+              ✓ Data changed
+            </div>
+            <FlowArrowV />
+            <div className="border border-slate-700 bg-slate-900/50 rounded-sm p-2 space-y-1">
+              <div className="text-[9px] font-mono text-amber-500 uppercase tracking-widest mb-1">
+                Step 6 — Sync
+              </div>
+              <ArchNode
+                title="6a · Algolia clearObjects + saveObjects"
+                desc="Facets: Country · Category · EmployeeType · Remote · Location"
+                className="border-purple-500/40 bg-purple-950/10"
+              />
+              <FlowArrowV />
+              <ArchNode
+                title="6b · DynamoDB deleteItem (all existing)"
+                desc="Clear stale records before writing fresh batch"
+                className="border-rose-500/40 bg-rose-950/10"
+              />
+              <FlowArrowV />
+              <ArchNode
+                title="6c · batchWriteItem (25 items / chunk)"
+                desc="Sequential batch writes · DynamoDB API limit"
+                className="border-amber-500/40 bg-amber-950/10"
+              />
+            </div>
+          </div>
+        </div>
+
+        <figcaption className="text-xs font-mono text-slate-500 mt-4 border-t border-slate-800 pt-2">
+          Change-detection gate at Step 5 short-circuits all downstream writes
+          when the Workday feed is identical to the current DB state
+        </figcaption>
+      </figure>
+
+      {/* Key Contributions */}
+      <div className="border border-slate-800 bg-slate-900/20 p-5 rounded-sm">
+        <h2 className="text-[10px] font-mono text-amber-400 uppercase tracking-widest mb-4">
+          Key Contributions
+        </h2>
+        <ul className="space-y-3">
+          {contributions.map((c, i) => (
+            <li
+              key={i}
+              className="flex gap-3 text-sm text-slate-400 leading-relaxed"
+            >
+              <span className="text-amber-600 font-mono shrink-0 mt-0.5">
+                {String(i + 1).padStart(2, "0")}.
+              </span>
+              <span>{c}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Collapsible engineering decisions */}
+      <details className="group border border-slate-800 rounded-sm">
+        <summary className="px-4 py-3 text-xs font-mono text-slate-500 cursor-pointer hover:text-slate-300 transition-colors list-none flex justify-between items-center">
+          <span>Engineering Decisions &amp; Design Strengths</span>
+          <span className="group-open:rotate-90 transition-transform duration-200">›</span>
+        </summary>
+        <div className="px-4 pb-5 pt-3 border-t border-slate-800 space-y-4 text-sm text-slate-400 leading-relaxed">
+          {[
+            {
+              title: "Change Detection Before Writing",
+              body: "Each run scans all existing DynamoDB IDs and compares them against the incoming Workday feed by count and set membership. If identical, every write — DynamoDB deletes, batch inserts, and the Algolia re-index — is skipped entirely. This eliminates unnecessary write costs and prevents Algolia from briefly serving stale results during its clear+write window.",
+            },
+            {
+              title: "Reserved Concurrency: 1",
+              body: "The importJob function runs for up to 15 minutes. Capping concurrency to 1 prevents EventBridge's next scheduled invocation from spawning a parallel run while the previous one is still in progress — which would produce duplicate DynamoDB deletes and conflicting Algolia index operations.",
+            },
+            {
+              title: "Dual-Format Transform in One Pass",
+              body: "mapJobPart() accepts a 'purpose' argument ('DB' or 'search') and returns the appropriate data shape in a single loop over the Workday feed. Both the DynamoDB typed array and the Algolia plain-JSON array are built simultaneously — no second pass, no intermediate copies, no risk of the two representations diverging.",
+            },
+            {
+              title: "DynamoDB Batch Write Chunking",
+              body: "batchWriteItem accepts a maximum of 25 items per API call. The createBatches utility pre-splits the job array into 25-item chunks and the pipeline writes them sequentially, ensuring it stays within DynamoDB's API limits regardless of how many jobs Workday returns.",
+            },
+            {
+              title: "Edge API Gateway Endpoint",
+              body: "The fetchJob API is deployed as an EDGE-type endpoint distributed through CloudFront's global network, reducing read latency for geographically distributed portfolio visitors without a separate CDN configuration or additional infrastructure cost.",
+            },
+          ].map(({ title, body }) => (
+            <div key={title}>
+              <div className="text-xs font-mono text-amber-400 mb-1">{title}</div>
+              <p className="text-slate-500 text-xs leading-relaxed">{body}</p>
             </div>
           ))}
         </div>
